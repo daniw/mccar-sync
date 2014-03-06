@@ -1,0 +1,12 @@
+*/*.cwGeneratedFileSetLog
+
+*/*.g_c
+
+*/*.g_x
+
+*/FLASH
+*/DEBUG
+*/Documentation
+*/Generated_Code
+*/*.apconfig
+*/*.traceConfig
