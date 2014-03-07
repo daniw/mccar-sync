@@ -26,7 +26,10 @@
 void main(void) 
 {
     EnableInterrupts;       // Interrupts aktivieren
-    
+    asm{
+    	BSET 2, PTDDD
+    	BSET 2, PTDD
+    }
     for(;;) 
     {   
       __RESET_WATCHDOG();  /* feeds the dog */

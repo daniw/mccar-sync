@@ -23,14 +23,14 @@ Entry point: 0x1A40 (_Startup)
 _startupData is allocated at 0x1ADB and uses 6 Bytes
 extern struct _tagStartup {
   unsigned nofZeroOut     0
-  _Copy    *toCopyDownBeg 0x1AF8
+  _Copy    *toCopyDownBeg 0x1AFC
 } _startupData;
 
 *********************************************************************************************
 SECTION-ALLOCATION SECTION
 Section Name                    Size  Type     From       To       Segment
 ---------------------------------------------------------------------------------------------
-.text                             11     R     0x1AED     0x1AF7   ROM
+.text                             15     R     0x1AED     0x1AFB   ROM
 .abs_section_0                     1   N/I        0x0        0x0   .absSeg0
 .abs_section_1                     1   N/I        0x1        0x1   .absSeg1
 .abs_section_2                     1   N/I        0x2        0x2   .absSeg2
@@ -182,12 +182,12 @@ Section Name                    Size  Type     From       To       Segment
 .startData                        18     R     0x1ADB     0x1AEC   ROM
 .init                            379     R     0x1960     0x1ADA   ROM
 .stack                           512   R/W      0x100      0x2FF   RAM
-.copy                              2     R     0x1AF8     0x1AF9   ROM
+.copy                              2     R     0x1AFC     0x1AFD   ROM
 .vectSeg148_vect                  42     R     0xFFC4     0xFFED   .vectSeg148
 .vectSeg149_vect                  16     R     0xFFF0     0xFFFF   .vectSeg149
 
 Summary of section sizes per section type:
-READ_ONLY (R):         1D4 (dec:      468)
+READ_ONLY (R):         1D8 (dec:      472)
 READ_WRITE (R/W):      200 (dec:      512)
 NO_INIT (N/I):          AC (dec:      172)
 
@@ -231,7 +231,7 @@ OBJECT-ALLOCATION SECTION
 ---------------------------------------------------------------------------------------------
 MODULE:                 -- main_c.obj --
 - PROCEDURES:
-     main                                      1AED       B      11       1   .text       
+     main                                      1AED       F      15       1   .text       
 - VARIABLES:
 MODULE:                 -- mc9s08jm60_c.obj --
 - PROCEDURES:
@@ -242,8 +242,8 @@ MODULE:                 -- mc9s08jm60_c.obj --
      _PTBDD                                       3       1       1       0   .abs_section_3
      _PTCD                                        4       1       1       0   .abs_section_4
      _PTCDD                                       5       1       1       0   .abs_section_5
-     _PTDD                                        6       1       1       0   .abs_section_6
-     _PTDDD                                       7       1       1       0   .abs_section_7
+     _PTDD                                        6       1       1       1   .abs_section_6
+     _PTDDD                                       7       1       1       1   .abs_section_7
      _PTED                                        8       1       1       0   .abs_section_8
      _PTEDD                                       9       1       1       0   .abs_section_9
      _PTFD                                        A       1       1       0   .abs_section_a
@@ -429,7 +429,7 @@ MODULE:                 -- start08_c.obj --
 MODULE STATISTIC
   Name                                      Data   Code  Const
 ---------------------------------------------------------------------------------------------
-  main_c.obj                                   0     11      0
+  main_c.obj                                   0     15      0
   mc9s08jm60_c.obj                           172      0      0
   start08_c.obj                                0    379      0
   other                                      512     76      2
@@ -753,8 +753,8 @@ OBJECT LIST SORTED BY ADDRESS
      _PTBDD                                       3       1       1       0   .abs_section_3
      _PTCD                                        4       1       1       0   .abs_section_4
      _PTCDD                                       5       1       1       0   .abs_section_5
-     _PTDD                                        6       1       1       0   .abs_section_6
-     _PTDDD                                       7       1       1       0   .abs_section_7
+     _PTDD                                        6       1       1       1   .abs_section_6
+     _PTDDD                                       7       1       1       1   .abs_section_7
      _PTED                                        8       1       1       0   .abs_section_8
      _PTEDD                                       9       1       1       0   .abs_section_9
      _PTFD                                        A       1       1       0   .abs_section_a
@@ -928,7 +928,7 @@ OBJECT LIST SORTED BY ADDRESS
      errISR_LowVoltage                         1ACC       5       5       0   .init       
      errISR_IRQ                                1AD1       5       5       0   .init       
      errISR_SWI                                1AD6       5       5       0   .init       
-     main                                      1AED       B      11       1   .text       
+     main                                      1AED       F      15       1   .text       
 
 *********************************************************************************************
 UNUSED-OBJECTS SECTION
@@ -940,7 +940,7 @@ start08_c.obj:
 *********************************************************************************************
 COPYDOWN SECTION
 ---------------------------------------------------------------------------------------------
-------- ROM-ADDRESS: 0x1AF8 ---- SIZE       2 ---
+------- ROM-ADDRESS: 0x1AFC ---- SIZE       2 ---
 Filling bytes inserted
  0000
 
@@ -952,7 +952,7 @@ ClearStack                USES __SEG_START_SSTACK
 initClock                 USES _SOPT1 _SPMSC1 _SPMSC2 _MCGTRM _MCGSC _MCGC2 
                                 _MCGC1 _MCGC3 
 _Startup                  USES __SEG_END_SSTACK Init initClock ClearStack main 
-main                      USES _SRS 
+main                      USES _PTDDD _PTDD _SRS 
 
 *********************************************************************************************
 DEPENDENCY TREE
@@ -980,5 +980,5 @@ STATISTIC SECTION
 ExeFile:
 --------
 Number of blocks to be downloaded: 6
-Total size of all blocks to be downloaded: 468
+Total size of all blocks to be downloaded: 472
 
