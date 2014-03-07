@@ -37,7 +37,7 @@ OBJS_OS_FORMAT += \
 # Each subdirectory must supply rules for building sources it contributes
 Lib_Sources/_hcs08/mc9s08jm60_c.obj: $(_HCS08)/mc9s08jm60.c
 	@echo 'Building file: $<'
-	@echo 'Executing target #2 $<'
+	@echo 'Executing target #3 $<'
 	@echo 'Invoking: HCS08 Compiler'
 	"$(HC08ToolsEnv)/chc08" -ArgFile"Lib_Sources/_hcs08/mc9s08jm60.args" -ObjN="Lib_Sources/_hcs08/mc9s08jm60_c.obj" "$<" -Lm="$(@:%.obj=%.d)" -LmCfg=xilmou
 	@echo 'Finished building: $<'
@@ -50,7 +50,7 @@ Lib_Sources/_hcs08/mc9s08jm60_c.d: $(_HCS08)/mc9s08jm60.c
 
 Lib_Sources/_hcs08/start08_c.obj: $(_HCS08)/start08.c
 	@echo 'Building file: $<'
-	@echo 'Executing target #3 $<'
+	@echo 'Executing target #4 $<'
 	@echo 'Invoking: HCS08 Compiler'
 	"$(HC08ToolsEnv)/chc08" -ArgFile"Lib_Sources/_hcs08/start08.args" -ObjN="Lib_Sources/_hcs08/start08_c.obj" "$<" -Lm="$(@:%.obj=%.d)" -LmCfg=xilmou
 	@echo 'Finished building: $<'

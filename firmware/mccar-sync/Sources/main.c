@@ -17,7 +17,7 @@
  *--------------------------------------------------------------------
  */
 #include "platform.h" /* include peripheral declarations */
-
+#include "hardware.h" /* include lowlevel hardware daclarations */
 
 
 /**

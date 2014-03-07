@@ -4,7 +4,7 @@
 # a _ESCAPE version of the macro is added that escapes the space with backslash (\).
 ################################################################################
 
-export _HCS08=C:/Daten/Daniel/studium/git_repo/sem4/mc/mc/templates/MC_Library/Lib_Sources/_hcs08
+export _HCS08=C:/Daten/Daniel/elektronik/projekte/mccar-sync/firmware/MC_Library/Lib_Sources/_hcs08
 export LIB_HEADERS=C:/Daten/Daniel/elektronik/projekte/mccar-sync/firmware/MC_Library/Lib_Headers
 export HC08ToolsEnv=$(CWInstallLocationEnv)/MCU/prog
 export GNU_Make_Install_DirEnv=$(CWInstallLocationEnv)/gnu/bin

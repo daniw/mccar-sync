@@ -6,9 +6,9 @@
 
 */*.g_x
 
-*/FLASH
-*/DEBUG
-*/Documentation
-*/Generated_Code
+*/*/FLASH
+*/*/DEBUG
+*/*/Documentation
+*/*/Generated_Code
 */*.apconfig
 */*.traceConfig

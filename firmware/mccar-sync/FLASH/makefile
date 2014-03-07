@@ -2,7 +2,7 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-#Progress monitor hint: 3
+#Progress monitor hint: 4
 first : all
 -include ../makefile.init
 
@@ -90,14 +90,14 @@ endif
 # Tool invocations
 mccar-sync.abs: $(OBJS) $(USER_OBJS) ../Project_Settings/Linker_Files/Project.prm
 	@echo 'Building target: $@'
-	@echo 'Executing target #4 $@'
+	@echo 'Executing target #5 $@'
 	@echo 'Invoking: S08 Linker'
 	"$(HC08ToolsEnv)/linker" -ArgFile"mccar-sync.args" -O"mccar-sync.abs"
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 mccar-sync.abs.s19: $(BBL_SRCS) $(EXECUTABLES)
-	@echo 'Executing target #5 $@'
+	@echo 'Executing target #6 $@'
 	@echo 'Invoking: S08 Burner'
 	"$(HC08ToolsEnv)/burner" -ArgFile"mccar-sync.abs.args" -f="$<" -env"ABS_FILE=$(strip $(EXECUTABLES_OS_FORMAT))"
 	@echo 'Finished building: $@'
@@ -105,7 +105,7 @@ mccar-sync.abs.s19: $(BBL_SRCS) $(EXECUTABLES)
 
 # Other Targets
 clean:
-	-$(RM) $(S_DEPS_QUOTED) "./*/*/*.obj" "./*/*.obj"  $(CPP_DEPS_QUOTED) $(CC_DEPS_QUOTED) $(S_UPPER_DEPS_QUOTED) $(CXX_DEPS_QUOTED) $(ASM_DEPS_QUOTED) $(BURNER_OUTPUT_OUTPUTS_QUOTED) $(ASM_UPPER_DEPS_QUOTED) $(C_UPPER_DEPS_QUOTED) $(C++_DEPS_QUOTED) $(EXECUTABLES_QUOTED) "./*/*/*.d" "./*/*.d"  $(ProjDirPath)/FLASH/mccar-sync.abs $(ProjDirPath)/FLASH/mccar-sync.abs $(ProjDirPath)/FLASH/mccar-sync.abs.args $(ProjDirPath)/FLASH/mccar-sync.abs.s19 $(ProjDirPath)/FLASH/mccar-sync.args $(ProjDirPath)/FLASH/mccar-sync.map
+	-$(RM) $(S_DEPS_QUOTED) "./*/*/*.obj" "./*/*.obj"  $(CPP_DEPS_QUOTED) $(CC_DEPS_QUOTED) $(S_UPPER_DEPS_QUOTED) $(CXX_DEPS_QUOTED) $(ASM_DEPS_QUOTED) $(BURNER_OUTPUT_OUTPUTS_QUOTED) $(ASM_UPPER_DEPS_QUOTED) $(C_UPPER_DEPS_QUOTED) $(C++_DEPS_QUOTED) $(EXECUTABLES_QUOTED) "./*/*/*.d" "./*/*.d"  $(ProjDirPath)/FLASH/mccar-sync.abs $(ProjDirPath)/FLASH/mccar-sync.abs.args $(ProjDirPath)/FLASH/mccar-sync.abs.s19 $(ProjDirPath)/FLASH/mccar-sync.args $(ProjDirPath)/FLASH/mccar-sync.map
 	-@echo ' '
 
 .PHONY: all clean dependents explicit-dependencies warning-messages

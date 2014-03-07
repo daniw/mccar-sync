@@ -8,6 +8,7 @@
 -I"$(MCUToolsBaseDirEnv)/lib/hc08c/device/include"
 -I"$(MCUToolsBaseDirEnv)/lib/hc08c/include"
 -I"$(MCUToolsBaseDirEnv)/lib/hc08c/device/asm_include"
+-I"$(ProjDirPath)/Sources"
 -BfaTSRON
 -Qvtpnone
 -F2

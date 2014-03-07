@@ -82,7 +82,7 @@
 	<variableList>
 		<variable>
 			<name>copy_PARENT</name>
-			<value>$%7BPARENT-5-PROJECT_LOC%7D/studium/git_repo/sem4/mc/mc/templates</value>
+			<value>$%7BPARENT-1-PROJECT_LOC%7D</value>
 		</variable>
 	</variableList>
 </projectDescription>
