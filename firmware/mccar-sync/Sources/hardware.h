@@ -12,7 +12,7 @@
 
 /*
 PINS: 
-Comment-Abbrevations: 
+Comment-Abbreviations: 
 I: Input, O: Output (PTxDD)
 L: Low, H: High (PTxD)
 R: Pullup Resistor active (PTxPE)
