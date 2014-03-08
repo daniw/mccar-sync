@@ -110,6 +110,10 @@
 <booleanAttribute key="com.freescale.cdt.debug.cw.useSerialTransferIO" value="false"/>
 <booleanAttribute key="com.freescale.cdt.debug.cw.useStopTransferIO" value="true"/>
 <booleanAttribute key="com.freescale.cdt.debug.cw.useUDPPort" value="false"/>
+<stringAttribute key="com.freescale.mcu.debug.connections.pnehcs08sim.CommandLineArgs" value=""/>
+<stringAttribute key="com.freescale.mcu.debug.connections.pnehcs08sim.ConfigFile" value=""/>
+<stringAttribute key="com.freescale.mcu.debug.connections.pnehcs08sim.Library" value="hcs08_pne_gdi"/>
+<stringAttribute key="com.freescale.mcu.debug.connections.pnehcs08sim.names_of_user_added_attributes" value=""/>
 <listAttribute key="com.freescale.panel.list">
 <listEntry value="Debugger Common Settings"/>
 <listEntry value="HC08 Interrupt"/>

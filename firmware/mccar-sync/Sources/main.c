@@ -26,14 +26,13 @@
 void main(void) 
 {
     uint32 i;
-    EnableInterrupts;       // Interrupts aktivieren
     hardware_lowlevel_init();
-    PTDD  |= LED_B;
-    
+    EnableInterrupts;       // Interrupts aktivieren
+
     while(1)
     {
         PTDD ^= LED_B;
-        for (i = 0; i < 100000; i++) {}
+        for (i = 0; i < 65536; i++) {}
     }
     
     for(;;) 
