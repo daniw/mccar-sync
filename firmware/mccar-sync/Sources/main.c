@@ -25,14 +25,20 @@
  */  
 void main(void) 
 {
+    uint32 i;
     EnableInterrupts;       // Interrupts aktivieren
-    asm{
-    	BSET 2, PTDDD
-    	BSET 2, PTDD
+    hardware_lowlevel_init();
+    PTDD  |= LED_B;
+    
+    while(1)
+    {
+        PTDD ^= LED_B;
+        for (i = 0; i < 100000; i++) {}
     }
+    
     for(;;) 
     {   
-      __RESET_WATCHDOG();  /* feeds the dog */
+        __RESET_WATCHDOG();  /* feeds the dog */
     }
     
   /* please make sure that you never leave main */
