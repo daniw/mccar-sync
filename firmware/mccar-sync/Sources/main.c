@@ -44,7 +44,7 @@ void main(void)
             for (j = 0; j < 40000; j++){}
         }
 
-        d = d < BACKRIGHT ? d + 1 : STOP;   //switching through all motor directions
+        d = d < BACKRIGHT ? d + 1 : STOP;   //switching through all possible motor directions
 
         /*
         switch(PTGD & (SW_JOY_0 | SW_JOY_1 | SW_JOY_2))

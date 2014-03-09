@@ -9,7 +9,7 @@
 #include "hardware.h"
 
 /**
- * Initialize clock module, ports and modules
+ * Initialize clock module, ports and timer
  * @author daniw
  */
 void hardware_lowlevel_init(void) 
@@ -137,6 +137,15 @@ void hardware_lowlevel_init(void)
 
 }
 
+
+//### Motor control ###
+/**
+ * This function controls both motors of the mccar.
+ * @author daniw
+ * @param dir direction, to which the mccar should drive
+ * @param speedleft speed of the left motor
+ * @param speedright speed of the right motor
+ */
 void motorcontrol(Direction_t dir, uint16 speedleft, uint16 speedright)
 {
     PTDD &= ~(MOTL_A | MOTL_B | MOTR_A | MOTR_B);
@@ -181,6 +190,6 @@ void motorcontrol(Direction_t dir, uint16 speedleft, uint16 speedright)
             PTDDD |=   MOTL_A | MOTL_B | MOTR_A | MOTR_B;
             break;
     }
-    TPM2C0V = speedleft;
-    TPM2C1V = speedright;
+    TPM2C0V = speedright;
+    TPM2C1V = speedleft;
 }
