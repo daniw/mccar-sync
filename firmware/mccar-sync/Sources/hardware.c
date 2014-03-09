@@ -108,4 +108,31 @@ void hardware_lowlevel_init(void)
     PTGPE = PTGPE_INIT;     // Init pullup enable register of portG
     PTGSE = PTGSE_INIT;     // Init slew rate control register of portG
     PTGDS = PTGDS_INIT;     // Init output drive strength register of portG
+
+    //### Timer 1 ###
+    TPM1SC   = TPM1SC_INIT;
+    TPM1MOD  = TPM1MOD_INIT;
+
+    TPM1C0SC = TPM1C0SC_INIT;
+    TPM1C1SC = TPM1C1SC_INIT;
+    TPM1C2SC = TPM1C2SC_INIT;
+    TPM1C3SC = TPM1C3SC_INIT;
+    TPM1C4SC = TPM1C4SC_INIT;
+    TPM1C5SC = TPM1C5SC_INIT;
+    TPM1C0V  = TPM1C0V_INIT;
+    TPM1C1V  = TPM1C1V_INIT;
+    TPM1C2V  = TPM1C2V_INIT;
+    TPM1C3V  = TPM1C3V_INIT;
+    TPM1C4V  = TPM1C4V_INIT;
+    TPM1C5V  = TPM1C5V_INIT;
+
+    //### Timer 2 ###
+    TPM2SC   = TPM2SC_INIT;
+    TPM2MOD  = TPM2MOD_INIT;
+    
+    TPM2C0SC = TPM2C0SC_INIT;
+    TPM2C1SC = TPM2C1SC_INIT;
+    TPM2C0V  = TPM2C0V_INIT;
+    TPM2C1V  = TPM2C1V_INIT;
+
 }

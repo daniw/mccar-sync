@@ -31,6 +31,7 @@ D: High drive strength enabled (PTxDS)
 #define BIT7 0x80
 
 
+//### I/O Ports ##
 //--- PortA ---
 #define LS_R            BIT0    ///< |OH|   Line sensor infrared LED left
 #define LS_MR           BIT1    ///< |OH|   Line sensor infrared LED middle left
@@ -44,7 +45,6 @@ D: High drive strength enabled (PTxDS)
 #define PTAPE_INIT      (0)
 #define PTASE_INIT      (0)
 #define PTADS_INIT      (0)
-
 
 //--- PortB ---
 #define SPI_MISO        BIT0    ///< |IR|   SPI MISO
@@ -62,7 +62,6 @@ D: High drive strength enabled (PTxDS)
 #define PTBSE_INIT      (0)
 #define PTBDS_INIT      (0)
 
-
 //--- PortC ---
 #define I2C_SCL         BIT0    ///< |IR|   I2C SCL
 #define I2C_SDA         BIT1    ///< |IR|   I2C SDA
@@ -77,7 +76,6 @@ D: High drive strength enabled (PTxDS)
 #define PTCPE_INIT      (I2C_SCL | I2C_SDA | VIRT_RXD)
 #define PTCSE_INIT      (0)
 #define PTCDS_INIT      (0)
-
 
 //--- PortD ---
 #define I_MON           BIT0    ///< |I|    Current monitor
@@ -95,7 +93,6 @@ D: High drive strength enabled (PTxDS)
 #define PTDSE_INIT      (0)
 #define PTDDS_INIT      (0)
 
-
 //--- PortE ---
 #define BT_RXD          BIT0    ///< |IR|   Bluetooth RXD
 #define BT_TXD          BIT1    ///< |I|    Bluetooth TXD
@@ -111,7 +108,6 @@ D: High drive strength enabled (PTxDS)
 #define PTEPE_INIT      (BT_RXD | IR_RX_F)
 #define PTESE_INIT      (0)
 #define PTEDS_INIT      (0)
-
 
 //--- PortF ---
 #define LED_FL_B        BIT0    ///< |OH|   Headlight left blue
@@ -129,7 +125,6 @@ D: High drive strength enabled (PTxDS)
 #define PTFSE_INIT      (0)
 #define PTFDS_INIT      (0)
 
-
 //--- PortG ---
 #define SW_JOY_0        BIT0    ///< |IR|   Joystick
 #define SW_JOY_1        BIT1    ///< |IR|   Joystick
@@ -143,6 +138,65 @@ D: High drive strength enabled (PTxDS)
 #define PTGPE_INIT      (SW_JOY_0 | SW_JOY_1 | SW_JOY_2)
 #define PTGSE_INIT      (0)
 #define PTGDS_INIT      (0)
+
+
+//### Timer 1 ###
+//--- Initialisation for generating the buzzer frequency directly from timer ---
+// bus rate clock, prescaler 4
+#define TPM1SC_INIT     (TPM1SC_CLKSA_MASK | TPM1SC_PS1_MASK)
+// Initial value for a frequency of 1 kHz on Buzzer
+#define TPM1MOD_INIT    (3000)
+
+//--- Initialisation for driver the buzzer with PWM ---
+// bus rate clock, no prescaler
+//#define TPM1SC_INIT     (TPM1SC_CLKSA_MASK)
+// Modulo for a sampling rate of 96 kHz
+//#define TPM1MOD_INIT    (250)
+// Modulo for a sampling rate of 48 kHz
+//#define TPM1MOD_INIT    (500)
+// Modulo for a sampling rate of 44.1 kHz
+//#define TPM1MOD_INIT    (544)
+// Modulo for a sampling rate of 32 kHz
+//#define TPM1MOD_INIT    (750)
+// Not in use
+#define TPM1C0SC_INIT   (0)
+// Not in use
+#define TPM1C1SC_INIT   (0)
+// Not in use
+#define TPM1C2SC_INIT   (0)
+// Not in use
+#define TPM1C3SC_INIT   (0)
+// Not in use
+#define TPM1C4SC_INIT   (0)
+// Buzzer not yet configured
+#define TPM1C5SC_INIT   (0)
+// Not in use
+#define TPM1C0V_INIT    (0)
+// Not in use
+#define TPM1C1V_INIT    (0)
+// Not in use
+#define TPM1C2V_INIT    (0)
+// Not in use
+#define TPM1C3V_INIT    (0)
+// Not in use
+#define TPM1C4V_INIT    (0)
+// Buzzer not yet configured
+#define TPM1C5V_INIT    (0)
+
+
+//### Timer 2 ###
+// bus rate clock, no prescaler
+#define TPM2SC_INIT     (TPM2SC_CLKSB_MASK)
+// Motor control with 10 bit resolution and a frequency of 23.4 kHz
+//#define TPM2MOD_INIT    (1024)
+// Motor control with 8 bit resolution and a frequency of 93.75 kHz
+#define TPM2MOD_INIT    (256)
+// Edge aligned PWM for both motors
+#define TPM2C0SC_INIT   (TPM2C0SC_MS0B_MASK | TPM2C0SC_ELS0B_MASK)
+#define TPM2C1SC_INIT   (TPM2C0SC_MS0B_MASK | TPM2C0SC_ELS0B_MASK)
+// Stop motors at startup
+#define TPM2C0V_INIT    (0)
+#define TPM2C1V_INIT    (0)
 
 
 // function prototypes

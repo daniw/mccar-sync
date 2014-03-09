@@ -25,7 +25,8 @@
  */  
 void main(void) 
 {
-    uint32 i;
+    uint16 i;
+    uint16 j;
     hardware_lowlevel_init();
     EnableInterrupts;       // Interrupts aktivieren
 
@@ -34,6 +35,20 @@ void main(void)
         // Switch rear LED on
         PTDD |= LED_B;
         
+        // Stop motors
+        PTDD &= ~(MOTL_A | MOTL_B | MOTR_A | MOTR_B);
+        // Drive forward
+        //PTDDD &= ~(MOTL_B | MOTR_A);
+        // Drive a circle
+        PTDDD &= ~(MOTL_A | MOTR_A);
+
+        for (i = 255; i > 0; i--)
+        {
+            TPM2C0V = i;
+            TPM2C1V = i;
+            for (j = 0; j < 40000; j++){}
+        }
+        /*
         switch(PTGD & (SW_JOY_0 | SW_JOY_1 | SW_JOY_2))
         {
             case 4: // Up
@@ -87,7 +102,7 @@ void main(void)
                     PTFD |= LED_FL_B | LED_FL_R | LED_FR_R;
                 }
                 break;
-        }
+        }*/
     }
     
     for(;;) 
