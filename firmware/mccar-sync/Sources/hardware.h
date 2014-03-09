@@ -147,7 +147,7 @@ D: High drive strength enabled (PTxDS)
 // Initial value for a frequency of 1 kHz on Buzzer
 #define TPM1MOD_INIT    (3000)
 
-//--- Initialisation for driver the buzzer with PWM ---
+//--- Initialisation for driving the buzzer with PWM ---
 // bus rate clock, no prescaler
 //#define TPM1SC_INIT     (TPM1SC_CLKSA_MASK)
 // Modulo for a sampling rate of 96 kHz
@@ -199,8 +199,24 @@ D: High drive strength enabled (PTxDS)
 #define TPM2C1V_INIT    (0)
 
 
+//### Motor control ###
+//--- Directions for mccar to drive ---
+typedef enum Direction_
+{
+    STOP,
+    FORWARD,
+    BACKWARD,
+    TURNLEFT,
+    TURNRIGHT,
+    CURVELEFT,
+    CURVERIGHT,
+    BACKLEFT,
+    BACKRIGHT
+} Direction_t;
+
 // function prototypes
 void hardware_lowlevel_init(void);
+void motorcontrol(Direction_t dir, uint16 speedleft, uint16 speedright);
 
 
 #endif /* HARDWARE_H_ */

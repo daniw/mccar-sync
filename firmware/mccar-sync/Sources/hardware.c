@@ -136,3 +136,51 @@ void hardware_lowlevel_init(void)
     TPM2C1V  = TPM2C1V_INIT;
 
 }
+
+void motorcontrol(Direction_t dir, uint16 speedleft, uint16 speedright)
+{
+    PTDD &= ~(MOTL_A | MOTL_B | MOTR_A | MOTR_B);
+    switch (dir)
+    {
+        case STOP:
+            PTDDD |=   MOTL_A | MOTL_B | MOTR_A | MOTR_B;
+            break;
+        case FORWARD:
+            PTDDD |=   MOTL_A | MOTR_B;
+            PTDDD &= ~(MOTL_B | MOTR_A);
+            break;
+        case BACKWARD:
+            PTDDD |=   MOTL_B | MOTR_A;
+            PTDDD &= ~(MOTL_A | MOTR_B);
+            break;
+        case TURNLEFT:
+            PTDDD |=   MOTL_A | MOTR_A;
+            PTDDD &= ~(MOTL_B | MOTR_B);
+            break;
+        case TURNRIGHT:
+            PTDDD |=   MOTL_B | MOTR_B;
+            PTDDD &= ~(MOTL_A | MOTR_A);
+            break;
+        case CURVELEFT:
+            PTDDD |=   MOTL_A | MOTR_A | MOTR_B;
+            PTDDD &= ~(MOTL_B);
+            break;
+        case CURVERIGHT:
+            PTDDD |=   MOTL_A | MOTL_B | MOTR_B;
+            PTDDD &= ~(MOTR_A);
+            break;
+        case BACKLEFT:
+            PTDDD |=   MOTL_B | MOTR_A | MOTR_B;
+            PTDDD &= ~(MOTL_A);
+            break;
+        case BACKRIGHT:
+            PTDDD |=   MOTL_A | MOTL_B | MOTR_A;
+            PTDDD &= ~(MOTR_B);
+            break;
+        default:
+            PTDDD |=   MOTL_A | MOTL_B | MOTR_A | MOTR_B;
+            break;
+    }
+    TPM2C0V = speedleft;
+    TPM2C1V = speedright;
+}

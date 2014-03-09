@@ -27,27 +27,25 @@ void main(void)
 {
     uint16 i;
     uint16 j;
+    Direction_t d = STOP;
+
     hardware_lowlevel_init();
     EnableInterrupts;       // Interrupts aktivieren
 
+    // Switch rear LED on
+    PTDD |= LED_B;
+
     while(1)
     {
-        // Switch rear LED on
-        PTDD |= LED_B;
-        
-        // Stop motors
-        PTDD &= ~(MOTL_A | MOTL_B | MOTR_A | MOTR_B);
-        // Drive forward
-        //PTDDD &= ~(MOTL_B | MOTR_A);
-        // Drive a circle
-        PTDDD &= ~(MOTL_A | MOTR_A);
-
-        for (i = 255; i > 0; i--)
+        for (i = 255; i > 0; i--)   // negative ramp for testing PWM control
         {
-            TPM2C0V = i;
-            TPM2C1V = i;
+            motorcontrol(d, i, i);
+            
             for (j = 0; j < 40000; j++){}
         }
+
+        d = d < BACKRIGHT ? d + 1 : STOP;   //switching through all motor directions
+
         /*
         switch(PTGD & (SW_JOY_0 | SW_JOY_1 | SW_JOY_2))
         {
