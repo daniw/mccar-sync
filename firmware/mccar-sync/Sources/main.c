@@ -31,8 +31,63 @@ void main(void)
 
     while(1)
     {
-        PTDD ^= LED_B;
-        for (i = 0; i < 65536; i++) {}
+        // Switch rear LED on
+        PTDD |= LED_B;
+        
+        switch(PTGD & (SW_JOY_0 | SW_JOY_1 | SW_JOY_2))
+        {
+            case 4: // Up
+                PTDD |= MOTL_B | MOTR_A;
+                PTDD &= ~(MOTL_A | MOTR_B);
+                PTCD &= ~(LED_FL_G | LED_FR_G);
+                PTED &= ~(LED_FR_B);
+                PTFD &= ~(LED_FL_B | LED_FL_R | LED_FR_R);
+                break;
+            case 3: // Right
+                PTDD |= MOTR_A;
+                PTDD &= ~(MOTL_A | MOTL_B | MOTR_B);
+                PTCD &= ~(LED_FR_G);
+                PTED &= ~(LED_FR_B);
+                PTFD &= ~(LED_FR_R);
+                PTCD |= LED_FL_G;
+                PTFD |= LED_FL_B | LED_FL_R;
+                break;
+            case 6: // Down
+                PTDD |= MOTL_A | MOTR_B;
+                PTDD &= ~(MOTL_B | MOTR_A);
+                PTCD &= ~(LED_FL_G | LED_FR_G);
+                //PTED &= ~(LED_FR_B);
+                //PTFD &= ~(LED_FL_B | LED_FL_R | LED_FR_R);
+                PTED |= LED_FR_B;
+                PTFD |= LED_FL_B | LED_FL_R | LED_FR_R;
+                break;
+            case 5: // Left
+                PTDD |= MOTL_B;
+                PTDD &= ~(MOTL_A | MOTR_A | MOTR_B);
+                PTCD &= ~(LED_FL_G);
+                PTFD &= ~(LED_FL_B | LED_FL_R);
+                PTCD |= LED_FR_G;
+                PTED |= LED_FR_B;
+                PTFD |= LED_FR_R;
+                break;
+            case 2: // Push
+                PTDD |= MOTL_A | MOTR_A;
+                PTDD &= ~(MOTL_B | MOTR_B);
+                PTED &= ~(LED_FR_B);
+                PTFD &= ~(LED_FL_B);
+                PTCD |= LED_FL_G | LED_FR_G;
+                PTFD |= LED_FL_R | LED_FR_R;
+                break;
+            default:
+                if (!(PTGD & SW_MODE))
+                {
+                    PTDD &= ~(MOTL_A | MOTL_B | MOTR_A | MOTR_B);
+                    PTCD |= LED_FL_G | LED_FR_G;
+                    PTED |= LED_FR_B;
+                    PTFD |= LED_FL_B | LED_FL_R | LED_FR_R;
+                }
+                break;
+        }
     }
     
     for(;;) 
