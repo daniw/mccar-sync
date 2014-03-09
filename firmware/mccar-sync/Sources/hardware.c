@@ -148,7 +148,6 @@ void hardware_lowlevel_init(void)
  */
 void motorcontrol(Direction_t dir, uint16 speedleft, uint16 speedright)
 {
-    PTDD &= ~(MOTL_A | MOTL_B | MOTR_A | MOTR_B);
     switch (dir)
     {
         case STOP:
@@ -190,6 +189,32 @@ void motorcontrol(Direction_t dir, uint16 speedleft, uint16 speedright)
             PTDDD |=   MOTL_A | MOTL_B | MOTR_A | MOTR_B;
             break;
     }
+    PTDD &= ~(MOTL_A | MOTL_B | MOTR_A | MOTR_B);
     TPM2C0V = speedright;
     TPM2C1V = speedleft;
+}
+
+Joy_ways_t getjoystick(void)
+{
+    switch(PTGD & (SW_JOY_0 | SW_JOY_1 | SW_JOY_2))
+    {
+        case 4:
+            return UP;
+            break;
+        case 6:
+            return DOWN;
+            break;
+        case 3:
+            return RIGHT;
+            break;
+        case 5:
+            return LEFT;
+            break;
+        case 2:
+            return PUSH;
+            break;
+        default:
+            return NONE;
+            break;
+    }
 }

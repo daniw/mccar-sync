@@ -214,9 +214,25 @@ typedef enum Direction_
     BACKRIGHT
 } Direction_t;
 
+
+//### Joystick ###
+//--- Mask for joystick pins ---
+#define JOY_MASK = SW_JOY_0| SW_JOY_1 | SW_JOY_2;
+
+//--- Ways, the Joystick can be moved to ---
+typedef enum Joy_ways_
+{
+    NONE,
+    UP,
+    DOWN,
+    RIGHT,
+    LEFT,
+    PUSH,
+} Joy_ways_t;
+
 // function prototypes
 void hardware_lowlevel_init(void);
 void motorcontrol(Direction_t dir, uint16 speedleft, uint16 speedright);
-
+Joy_ways_t getjoystick(void);
 
 #endif /* HARDWARE_H_ */
