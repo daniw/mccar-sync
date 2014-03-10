@@ -203,6 +203,12 @@ void motorcontrol(Direction_t dir, uint16 speedleft, uint16 speedright)
     TPM2C1V = speedleft;
 }
 
+
+//### Joystick ###
+/**
+ * Function to read the current status from the joystick
+ * @return current position as joystick specific enum Joy_ways_t
+ */
 Joy_ways_t getjoystick(void)
 {
     switch(PTGD & (SW_JOY_0 | SW_JOY_1 | SW_JOY_2))
@@ -227,3 +233,4 @@ Joy_ways_t getjoystick(void)
             break;
     }
 }
+
