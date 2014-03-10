@@ -186,11 +186,11 @@ D: High drive strength enabled (PTxDS)
 
 //### Timer 2 ###
 // bus rate clock, no prescaler
-#define TPM2SC_INIT     (TPM2SC_CLKSB_MASK)
+#define TPM2SC_INIT     (TPM2SC_CLKSA_MASK)
 // Motor control with 10 bit resolution and a frequency of 23.4 kHz
-//#define TPM2MOD_INIT    (1024)
+#define TPM2MOD_INIT    (1023)
 // Motor control with 8 bit resolution and a frequency of 93.75 kHz
-#define TPM2MOD_INIT    (256)
+//#define TPM2MOD_INIT    (255)
 // Edge aligned PWM for both motors
 #define TPM2C0SC_INIT   (TPM2C0SC_MS0B_MASK | TPM2C0SC_ELS0B_MASK)
 #define TPM2C1SC_INIT   (TPM2C0SC_MS0B_MASK | TPM2C0SC_ELS0B_MASK)

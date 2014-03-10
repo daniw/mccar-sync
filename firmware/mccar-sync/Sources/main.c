@@ -30,18 +30,17 @@ void main(void)
     Direction_t d = STOP;
 
     hardware_lowlevel_init();
-    EnableInterrupts;       // Interrupts aktivieren
+    EnableInterrupts;               // Interrupts aktivieren
 
-    // Switch rear LED on
-    PTDD |= LED_B;
+    PTDD |= LED_B;                  // Switch rear LED on
 
     while(1)
     {
-        for (i = 255; i > 0; i--)   // negative ramp for testing PWM control
+        for (i = 1023; i > 0; i--)   // negative ramp for testing PWM control
         {
             motorcontrol(d, i, i);
             
-            for (j = 0; j < 40000; j++){}
+            for (j = 0; j < 10000; j++){}
         }
 
         d = d < BACKRIGHT ? d + 1 : STOP;   //switching through all possible motor directions
