@@ -33,15 +33,17 @@ D: High drive strength enabled (PTxDS)
 
 //### I/O Ports ##
 //--- PortA ---
-#define LS_R            BIT0    ///< |OH|   Line sensor infrared LED left
-#define LS_MR           BIT1    ///< |OH|   Line sensor infrared LED middle left
-#define LS_M            BIT2    ///< |OH|   Line sensor infrared LED middle
-#define LS_ML           BIT3    ///< |OH|   Line sensor infrared LED middle right
-#define LS_L            BIT4    ///< |OH|   Line sensor infrared LED right
+#define LS_LED_R        BIT0    ///< |OH|   Line sensor infrared LED left
+#define LS_LED_MR       BIT1    ///< |OH|   Line sensor infrared LED middle left
+#define LS_LED_M        BIT2    ///< |OH|   Line sensor infrared LED middle
+#define LS_LED_ML       BIT3    ///< |OH|   Line sensor infrared LED middle right
+#define LS_LED_L        BIT4    ///< |OH|   Line sensor infrared LED right
 #define IR_R            BIT5    ///< |OL|   Rear infrared LED
 
-#define PTADD_INIT      (LS_R | LS_MR | LS_M | LS_ML | LS_L | IR_R)
-#define PTAD_INIT       (LS_R | LS_MR | LS_M | LS_ML | LS_L)
+#define LS_LED_MASK     (LS_LED_R | LS_LED_MR | LS_LED_M | LS_LED_ML | LS_LED_L)
+
+#define PTADD_INIT      (LS_LED_R | LS_LED_MR | LS_LED_M | LS_LED_ML | LS_LED_L | IR_R)
+#define PTAD_INIT       (LS_LED_R | LS_LED_MR | LS_LED_M | LS_LED_ML | LS_LED_L)
 #define PTAPE_INIT      (0)
 #define PTASE_INIT      (0)
 #define PTADS_INIT      (0)
@@ -51,10 +53,10 @@ D: High drive strength enabled (PTxDS)
 #define SPI_MOSI        BIT1    ///< |IR|   SPI_MOSI
 #define SPI_SCK         BIT2    ///< |IR|   SPI_SCK
 #define BT_EN           BIT3    ///< |OL|   Bluetooth Enable
-#define LS_IR_R         BIT4    ///< |I|    Line sensor IR receiver right
-#define LS_IR_MR        BIT5    ///< |I|    Line sensor IR receiver right middle
-#define LS_IR_ML        BIT6    ///< |I|    Line sensor IR receiver left middle
-#define LS_IR_L         BIT7    ///< |I|    Line sensor IR receiver left
+#define LS_REC_R        BIT4    ///< |I|    Line sensor IR receiver right
+#define LS_REC_MR       BIT5    ///< |I|    Line sensor IR receiver right middle
+#define LS_REC_ML       BIT6    ///< |I|    Line sensor IR receiver left middle
+#define LS_REC_L        BIT7    ///< |I|    Line sensor IR receiver left
 
 #define PTBDD_INIT      (BT_EN)
 #define PTBD_INIT       (0)
@@ -211,7 +213,6 @@ D: High drive strength enabled (PTxDS)
 //--- I/O pins as analog inputs
 #define APCTL1_INIT     (APCTL1_ADPC4_MASK | APCTL1_ADPC5_MASK | APCTL1_ADPC6_MASK | APCTL1_ADPC7_MASK)
 #define APCTL2_INIT     (APCTL2_ADPC8_MASK | APCTL2_ADPC9_MASK)
-#define APCTL3_INIT     (0)
 
 
 //### Motor control ###
@@ -249,5 +250,6 @@ typedef enum Joy_ways_
 void hardware_lowlevel_init(void);
 void motorcontrol(Direction_t dir, uint16 speedleft, uint16 speedright);
 Joy_ways_t getjoystick(void);
+void getline(uint16* line);
 
 #endif /* HARDWARE_H_ */

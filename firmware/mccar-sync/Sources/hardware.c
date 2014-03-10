@@ -142,8 +142,6 @@ void hardware_lowlevel_init(void)
     ADCCFG = ADCCFG_INIT;
     APCTL1 = APCTL1_INIT;
     APCTL2 = APCTL2_INIT;
-    APCTL3 = APCTL3_INIT;
-
 }
 
 
@@ -234,3 +232,35 @@ Joy_ways_t getjoystick(void)
     }
 }
 
+
+//### line sensor ###
+/**
+ * Function to read out all fields from the line sensor
+ * @param line Pointer to a field to store the value for each field
+ *             This array must have a minimal length of 8!
+ *             line[0] is on the left side, line[7] is on the right side
+ */
+void getline(uint16* line)
+{
+    uint8 i;
+    uint16 linedark;                    // temporary register for dark value
+    for (i = 0; i <= 7; i++)            // loop through all fields
+    {
+        PTAD |= LS_LED_MASK;            // switch all line sensor leds off
+        ADCSC1_ADCH = ((i / 2) + 4);    // Start dummy conversion to wait for filters to settle
+        while(!ADCSC1_COCO){}           // wait until conversion is complete
+        ADCSC1_ADCH = ((i / 2) + 4);    // Start conversion for dark value
+        while(!ADCSC1_COCO){}           // wait until conversion is complete
+        linedark = ADCR;                // save dark value as reference for environmental light
+
+        PTAD &= ~(1 << (4 - ((i + 1) / 2))); // switch corresponding led on
+        ADCSC1_ADCH = ((i / 2) + 4);    // Start dummy conversion to wait for filters to settle
+        while(!ADCSC1_COCO){}           // wait until conversion is complete
+        ADCSC1_ADCH = ((i / 2) + 4);    // Start conversion for sensing line
+        while(!ADCSC1_COCO){}           // wait until conversion is complete
+
+        //line[i] = ADCR - linedark;      // calculate difference to eliminate environmental light
+        line[i] = ADCR;                 // without dark correction
+    }
+    
+}

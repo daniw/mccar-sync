@@ -19,15 +19,19 @@
 #include "platform.h" /* include peripheral declarations */
 #include "hardware.h" /* include lowlevel hardware declarations */
 
+#define MOTINC 1
+#define MOTDEC 10
 
 /**
  * main program
  */  
 void main(void) 
 {
+    uint16 leftspeed = 0;
+    uint16 rightspeed = 0;
     uint16 i;
-    uint16 j;
     Direction_t d = STOP;
+    uint16 line[8];
 
     hardware_lowlevel_init();
     EnableInterrupts;               // Interrupts aktivieren
@@ -36,6 +40,82 @@ void main(void)
 
     while(1)
     {
+        getline(line);
+
+/*
+        if (line[7] > 30)
+        {
+            if (leftspeed + MOTINC <= 1023)
+            {
+                leftspeed += MOTINC;
+            }
+            else
+            {
+                leftspeed = 1023;
+            }
+        }
+        else
+        {
+            if (leftspeed >= MOTDEC)
+            {
+                leftspeed -= MOTDEC;
+            }
+            else
+            {
+                leftspeed = 0;
+            }
+        }
+
+        if (line[0] > 700)
+        {
+            if (rightspeed + MOTINC <= 1023)
+            {
+                rightspeed += MOTINC;
+            }
+            else
+            {
+                rightspeed = 1023;
+            }
+        }
+        else
+        {
+            if (rightspeed >= MOTDEC)
+            {
+                rightspeed -= MOTDEC;
+            }
+            else
+            {
+                rightspeed = 0;
+            }
+        }
+*/
+
+
+
+        if (line[7] > 30)
+        {
+            leftspeed = 900;
+        }
+        else
+        {
+            leftspeed = 0;
+        }
+
+        if (line[0] > 700)
+        {
+            rightspeed = 900;
+        }
+        else
+        {
+            rightspeed = 0;
+        }
+
+
+        motorcontrol(FORWARD, leftspeed, rightspeed);
+        
+        for (i = 0; i < 100; i++){}
+        //motorcontrol(FORWARD, line[0]/4, line[7]/4);
+        /*
         for (i = 1023; i > 0; i--)   // negative ramp for testing PWM control
         {
             motorcontrol(d, i, i);
@@ -44,6 +124,7 @@ void main(void)
         }
 
         d = d < BACKRIGHT ? d + 1 : STOP;   //switching through all possible motor directions
+        */
     }
     
     for(;;) 
