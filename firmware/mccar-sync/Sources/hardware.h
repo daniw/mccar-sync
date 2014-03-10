@@ -199,6 +199,21 @@ D: High drive strength enabled (PTxDS)
 #define TPM2C1V_INIT    (0)
 
 
+//### Analog digital converter ###
+//--- Signal conversion, module disabled ---
+#define ADCSC1_INIT     (ADCSC1_ADCH_MASK)
+//--- Software trigger ---
+#define ADCSC2_INIT     (0)
+//--- ADCCV not in use ---
+#define ADCCV_INIT      (0)
+//--- Long sample time, Clock divided by 4 for ADCK, 12 bit conversion, bus clock as clock source ---
+#define ADCCFG_INIT     (ADCCFG_ADLSMP_MASK | ADCCFG_ADIV1_MASK | ADCCFG_MODE0_MASK)
+//--- I/O pins as analog inputs
+#define APCTL1_INIT     (APCTL1_ADPC4_MASK | APCTL1_ADPC5_MASK | APCTL1_ADPC6_MASK | APCTL1_ADPC7_MASK)
+#define APCTL2_INIT     (APCTL2_ADPC8_MASK | APCTL2_ADPC9_MASK)
+#define APCTL3_INIT     (0)
+
+
 //### Motor control ###
 //--- Directions for mccar to drive ---
 typedef enum Direction_

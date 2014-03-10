@@ -27,7 +27,7 @@ void hardware_lowlevel_init(void)
     while(!MCGSC_OSCINIT);
     // Block interrupts
     DisableInterrupts;
-    // Select external clock source for MCGOUT 
+    // Select external clock source for MCGOUT
     // divide by 128 for fll
     MCGC1 = MCGC1_CLKS1_MASK | MCGC1_RDIV_MASK;
     // Wait until clock source for reference clock has changed
@@ -129,11 +129,20 @@ void hardware_lowlevel_init(void)
     //### Timer 2 ###
     TPM2SC   = TPM2SC_INIT;
     TPM2MOD  = TPM2MOD_INIT;
-    
+
     TPM2C0SC = TPM2C0SC_INIT;
     TPM2C1SC = TPM2C1SC_INIT;
     TPM2C0V  = TPM2C0V_INIT;
     TPM2C1V  = TPM2C1V_INIT;
+
+    //### Analog digital converter ###
+    ADCSC1 = ADCSC1_INIT;
+    ADCSC2 = ADCSC2_INIT;
+    ADCCV  = ADCCV_INIT;
+    ADCCFG = ADCCFG_INIT;
+    APCTL1 = APCTL1_INIT;
+    APCTL2 = APCTL2_INIT;
+    APCTL3 = APCTL3_INIT;
 
 }
 
