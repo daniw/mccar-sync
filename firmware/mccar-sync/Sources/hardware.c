@@ -264,3 +264,18 @@ void getline(uint16* line)
     }
     
 }
+
+
+//### Power supply ###
+//--- Supply voltage ---
+/**
+ * Function to measure the supply voltage respectively battery status
+ * @return ADC value for supply voltage
+ */
+uint16 getsupplyvoltage(void)
+{
+    ADCSC2_ADCH = 9;                // Start conversion
+    while(!ADCSC1_COCO){}           // wait until conversion is complete
+    return ADCR;
+}
+
