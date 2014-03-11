@@ -291,3 +291,12 @@ uint16 getsupplycurrent(void)
     return ADCR;
 }
 
+//--- Charge status ---
+/**
+ * Function to read battery charger status
+ * @return battery charger state
+ */
+Chg_state_t getsupplystate(void)
+{
+    return PTDD_PTDD3 ? FULL : CHARGE;
+}

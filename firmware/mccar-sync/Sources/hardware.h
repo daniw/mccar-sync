@@ -246,6 +246,14 @@ typedef enum Joy_ways_
     PUSH,
 } Joy_ways_t;
 
+//### Battery charger ###
+//--- Battery charger state ---
+typedef enum Chg_state_
+{
+    CHARGE,
+    FULL
+} Chg_state_t;
+
 // function prototypes
 void hardware_lowlevel_init(void);
 void motorcontrol(Direction_t dir, uint16 speedleft, uint16 speedright);
@@ -253,5 +261,6 @@ Joy_ways_t getjoystick(void);
 void getline(uint16* line);
 uint16 getsupplyvoltage(void);
 uint16 getsupplycurrent(void);
+Chg_state_t getsupplystate(void);
 
 #endif /* HARDWARE_H_ */
