@@ -252,5 +252,6 @@ void motorcontrol(Direction_t dir, uint16 speedleft, uint16 speedright);
 Joy_ways_t getjoystick(void);
 void getline(uint16* line);
 uint16 getsupplyvoltage(void);
+uint16 getsupplycurrent(void);
 
 #endif /* HARDWARE_H_ */

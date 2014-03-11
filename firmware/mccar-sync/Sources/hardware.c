@@ -279,3 +279,15 @@ uint16 getsupplyvoltage(void)
     return ADCR;
 }
 
+//--- Supply current ---
+/**
+ * Function to measure the supply current
+ * @return ADC value for supply current
+ */
+uint16 getsupplycurrent(void)
+{
+    ADCSC2_ADCH = 8;                // Start conversion
+    while(!ADCSC1_COCO){}           // wait until conversion is complete
+    return ADCR;
+}
+
