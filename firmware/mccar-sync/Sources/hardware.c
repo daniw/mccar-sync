@@ -300,3 +300,13 @@ Chg_state_t getsupplystate(void)
 {
     return PTDD_PTDD3 ? FULL : CHARGE;
 }
+
+//--- Mode switch ---
+/**
+ * Function to read mode switch status
+ * @return state of the3 mode switch
+ */
+uint8 getsupplymode(void)
+{
+    return PTGD_PTGD3;
+}

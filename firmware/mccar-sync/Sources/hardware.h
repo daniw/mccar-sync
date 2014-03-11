@@ -262,5 +262,6 @@ void getline(uint16* line);
 uint16 getsupplyvoltage(void);
 uint16 getsupplycurrent(void);
 Chg_state_t getsupplystate(void);
+uint8 getsupplymode(void);
 
 #endif /* HARDWARE_H_ */
