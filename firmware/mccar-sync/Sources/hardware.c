@@ -247,20 +247,21 @@ void getline(uint16* line)
     for (i = 0; i <= 7; i++)            // loop through all fields
     {
         PTAD |= LS_LED_MASK;            // switch all line sensor leds off
-        ADCSC1_ADCH = ((i / 2) + 4);    // Start dummy conversion to wait for filters to settle
+        ADCSC1_ADCH = (7 - (i / 2));    // Start dummy conversion to wait for filters to settle
         while(!ADCSC1_COCO){}           // wait until conversion is complete
-        ADCSC1_ADCH = ((i / 2) + 4);    // Start conversion for dark value
+        ADCSC1_ADCH = (7 - (i / 2));    // Start conversion for dark value
         while(!ADCSC1_COCO){}           // wait until conversion is complete
         linedark = ADCR;                // save dark value as reference for environmental light
 
         PTAD &= ~(1 << (4 - ((i + 1) / 2))); // switch corresponding led on
-        ADCSC1_ADCH = ((i / 2) + 4);    // Start dummy conversion to wait for filters to settle
+        ADCSC1_ADCH = (7 - (i / 2));    // Start dummy conversion to wait for filters to settle
         while(!ADCSC1_COCO){}           // wait until conversion is complete
-        ADCSC1_ADCH = ((i / 2) + 4);    // Start conversion for sensing line
+        ADCSC1_ADCH = (7 - (i / 2));    // Start conversion for sensing line
         while(!ADCSC1_COCO){}           // wait until conversion is complete
 
         //line[i] = ADCR - linedark;      // calculate difference to eliminate environmental light
-        line[i] = ADCR;                 // without dark correction
+        //line[i] = ADCR;                 // without dark correction
+        line[i] = ADCR > linedark ? ADCR - linedark : 0;    // calculate difference to eliminate environmental light
     }
     
 }
@@ -274,7 +275,7 @@ void getline(uint16* line)
  */
 uint16 getsupplyvoltage(void)
 {
-    ADCSC2_ADCH = 9;                // Start conversion
+    ADCSC1_ADCH = 9;                // Start conversion
     while(!ADCSC1_COCO){}           // wait until conversion is complete
     return ADCR;
 }
@@ -286,7 +287,7 @@ uint16 getsupplyvoltage(void)
  */
 uint16 getsupplycurrent(void)
 {
-    ADCSC2_ADCH = 8;                // Start conversion
+    ADCSC1_ADCH = 8;                // Start conversion
     while(!ADCSC1_COCO){}           // wait until conversion is complete
     return ADCR;
 }
