@@ -22,6 +22,9 @@
 #define MOTINC 1
 #define MOTDEC 10
 
+uint8 leftSpeeds[] =	{ 810, 960, 1010 };
+uint8 rightSpeeds[] = 	{ 800, 950, 1000 };
+    
 /**
  * main program
  */  
@@ -42,78 +45,23 @@ void main(void)
     {
         getline(line);
 
-/*
-        if (line[7] > 30)
+        leftspeed = 1010;
+        rightspeed = 1000;
+        
+        for (i = 0; i < 3; ++i)
         {
-            if (leftspeed + MOTINC <= 1023)
-            {
-                leftspeed += MOTINC;
-            }
-            else
-            {
-                leftspeed = 1023;
-            }
+        	if (line[i] < 100)
+        	{
+                leftspeed = leftSpeeds[i];
+        	}
+        	if (line[7 - i] < 100)
+        	{
+                rightspeed = rightSpeeds[i];
+        	}
         }
-        else
-        {
-            if (leftspeed >= MOTDEC)
-            {
-                leftspeed -= MOTDEC;
-            }
-            else
-            {
-                leftspeed = 0;
-            }
-        }
-
-        if (line[0] > 700)
-        {
-            if (rightspeed + MOTINC <= 1023)
-            {
-                rightspeed += MOTINC;
-            }
-            else
-            {
-                rightspeed = 1023;
-            }
-        }
-        else
-        {
-            if (rightspeed >= MOTDEC)
-            {
-                rightspeed -= MOTDEC;
-            }
-            else
-            {
-                rightspeed = 0;
-            }
-        }
-*/
-
-
-
-        if (line[0] > 100)
-        {
-            leftspeed = 1000;
-        }
-        else
-        {
-            leftspeed = 0;
-        }
-
-        if (line[7] > 100)
-        {
-            rightspeed = 1000;
-        }
-        else
-        {
-            rightspeed = 0;
-        }
-
 
         motorcontrol(FORWARD, leftspeed, rightspeed);
         
-        for (i = 0; i < 100; i++){}
         //motorcontrol(FORWARD, line[0]/4, line[7]/4);
         /*
         for (i = 1023; i > 0; i--)   // negative ramp for testing PWM control
