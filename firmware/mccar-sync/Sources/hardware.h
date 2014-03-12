@@ -215,6 +215,20 @@ D: High drive strength enabled (PTxDS)
 #define APCTL2_INIT     (APCTL2_ADPC8_MASK | APCTL2_ADPC9_MASK)
 
 
+//### IIC Bus ###
+//--- IIC master -> not initialised yet  ---
+#define IICA_INIT       (0)
+//--- Divider 240 for a SCL frequency of 100 kHz ---
+#define IICF_INIT       (0x1f)
+//--- Enable IIC module, interrupt enabled, master, transmit mode,  ---
+#define IICC1_INIT      (IICC1_IICEN_MASK | IICC1_IICIE_MASK | IICC1_MST_MASK | IICC1_TX)
+
+//### IIC Slave addresses ###
+//--- Quadrature encoder ---
+#define IIC_ADR_ENCODER (0x54)
+#define IIC_ADR_COLOR   (0x39)
+#define IIC_ADR_ACCEL   (0x1c)
+
 //### Motor control ###
 //--- Directions for mccar to drive ---
 typedef enum Direction_
