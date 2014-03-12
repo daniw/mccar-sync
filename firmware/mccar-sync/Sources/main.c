@@ -92,18 +92,18 @@ void main(void)
 
 
 
-        if (line[7] > 30)
+        if (line[0] > 100)
         {
-            leftspeed = 900;
+            leftspeed = 1000;
         }
         else
         {
             leftspeed = 0;
         }
 
-        if (line[0] > 700)
+        if (line[7] > 100)
         {
-            rightspeed = 900;
+            rightspeed = 1000;
         }
         else
         {
