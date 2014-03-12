@@ -58,18 +58,6 @@ void main(void)
         }
 
         motorcontrol(FORWARD, leftspeed, rightspeed);
-        
-        //motorcontrol(FORWARD, line[0]/4, line[7]/4);
-        /*
-        for (i = 1023; i > 0; i--)   // negative ramp for testing PWM control
-        {
-            motorcontrol(d, i, i);
-            
-            for (j = 0; j < 10000; j++){}
-        }
-
-        d = d < BACKRIGHT ? d + 1 : STOP;   //switching through all possible motor directions
-        */
     }
     
     for(;;) 
