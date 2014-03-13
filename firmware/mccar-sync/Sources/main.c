@@ -19,8 +19,12 @@
 #include "platform.h" /* include peripheral declarations */
 #include "hardware.h" /* include lowlevel hardware declarations */
 
-uint16 leftSpeeds[] =	{ 810, 960, 1010 };
-uint16 rightSpeeds[] = 	{ 810, 960, 1010 };
+//uint8 leftSpeeds[] =    { 810, 960, 1010 };               Buggy Code, but stil works
+//uint8 rightSpeeds[] =   { 800, 950, 1000 };
+//uint16 leftSpeeds[] =    { 810, 960, 1010 };
+//uint16 rightSpeeds[] =   { 800, 950, 1000 };
+uint16 leftSpeeds[] =    { 730, 870, 910 };
+uint16 rightSpeeds[] =   { 720, 860, 900 };
 //uint16 leftSpeeds2[] =  {  800,  825,  850,  875,  900,  925,  950,  975 };
 //uint16 rightspeeds2[] = {  975,  950,  925,  900,  875,  850,  825,  800 };
 //uint16 speeds[] =  { 800, 810, 820, 835, 860, 890, 930, 975 };
@@ -60,8 +64,10 @@ void main(void)
     {
         getline(line);              // read line sensor
 
-        leftspeed = 1010;
-        rightspeed = 1010;
+        leftspeed = 1010;           // Values for adi
+        rightspeed = 1000;
+//        leftspeed = 1020;           // Values for daniw
+//        rightspeed = 980;
 
         for (i = 0; i < 3; ++i)     // calculate speed based on position of line below the car. 
         {
@@ -90,6 +96,8 @@ void main(void)
         leftspeed = speeds[lowestline];
         rightspeed = speeds[7- lowestline];
 */
+        //leftspeed = 1020;                             // Calibrating motors to drive straight
+        //rightspeed = 980;
         motorcontrol(FORWARD, leftspeed, rightspeed);   // drive motors with calculated speed
     }
     
