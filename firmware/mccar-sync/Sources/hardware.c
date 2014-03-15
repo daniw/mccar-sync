@@ -142,6 +142,14 @@ void hardware_lowlevel_init(void)
     ADCCFG = ADCCFG_INIT;
     APCTL1 = APCTL1_INIT;
     APCTL2 = APCTL2_INIT;
+
+    //### IIC Bus ###
+    IICA = IICA_INIT;
+    IICF = IICF_INIT;
+    IICC1 = IICC1_INIT;
+    IICS = IICS_INIT;
+    IICD = IICD_INIT;
+    IICC2 = IICC2_INIT;
 }
 
 

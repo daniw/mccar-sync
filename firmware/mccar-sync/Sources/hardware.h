@@ -216,12 +216,20 @@ D: High drive strength enabled (PTxDS)
 
 
 //### IIC Bus ###
-//--- IIC master -> not initialised yet  ---
+//--- IIC master -> address not initialised yet  ---
 #define IICA_INIT       (0)
 //--- Divider 240 for a SCL frequency of 100 kHz ---
 #define IICF_INIT       (0x1f)
-//--- Enable IIC module, interrupt enabled, master, transmit mode,  ---
-#define IICC1_INIT      (IICC1_IICEN_MASK | IICC1_IICIE_MASK | IICC1_MST_MASK | IICC1_TX)
+//--- Enable IIC module, interrupt enabled, transmit mode,  ---
+//#define IICC1_INIT      (IICC1_IICEN_MASK | IICC1_IICIE_MASK | IICC1_TX)
+#define IICC1_INIT      (IICC1_IICEN_MASK | IICC1_TX)
+//--- No initialisation required ---
+#define IICS_INIT       (0)
+//--- No data ---
+#define IICD_INIT       (0)
+//--- No general call, 7 bit address ---
+#define IICC2_INIT      (0)
+
 
 //### IIC Slave addresses ###
 //--- Quadrature encoder ---
