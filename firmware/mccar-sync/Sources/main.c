@@ -50,8 +50,10 @@ void main(void)
     uint16 i;
     Direction_t d = STOP;
     uint16 line[8];
-    uint8 lowestline;
-    uint16 lowestvalue;
+    //uint8 lowestline;
+    //uint16 lowestvalue;
+    uint8 data;
+    uint8 cmd = 0x05;
 
     hardware_lowlevel_init();
     EnableInterrupts;               // Interrupts aktivieren
@@ -60,7 +62,48 @@ void main(void)
 
     while(getjoystick() != PUSH){}  // Wait until joystick is pushed
 
-    while(1)
+    while (1)
+    {
+        while (IICS_BUSY){}             // wait until i2c module is ready
+
+        IICC1_TX = 1;                   // prepare module for sending data to slave
+        IICC1_MST = 1;                  // 
+        IICD = (IIC_ADR_ENCODER << 1);  // start communication
+        while (!IICS_IICIF){}           // Wait until address has been sent
+        IICS_IICIF = 1;                 // clear interrupt flag
+        if (!IICS_RXAK)                 // slave present? 
+        {
+            IICD = cmd;                 // send command
+            while (!IICS_IICIF){}       // wait until command has been sent
+            IICS_IICIF = 1;             // clear interrupt flag
+            IICC1_RSTA = 1;             // send start condition again to change mode
+            IICD = (IIC_ADR_ENCODER << 1) | 1;     // send address again with changed mode
+            while(!IICS_IICIF){}        // wait until address has been sent
+            if (!IICS_RXAK)             // slave present? 
+            {
+                IICS_IICIF = 1;         // clear interrupt flag
+                IICC_TX = 0;            // receive byte from slave
+                IICC_TXAK = 1;          // send ack because this is the last byte
+                data = IICD;            // read data register to start communication
+                while (!IICS_IICIF){}   // wait until data has been received
+                IICS_IICIF = 1;         // clear interrupt flag
+                IICC1_MST = 0;          // send stop condition
+                data = IICD;            // copy data
+            }
+            else                        // slave does not respond
+            {
+                IICC1_MST = 0;          // stop transmission
+                IICS_IICIF = 1;         // clear interrupt flag
+            }
+        }
+        else                            // slave does not respond
+        {
+            IICC1_MST = 0;              // stop transmission
+            IICS_IICIF = 1;             // clear interrupt flag
+        }
+    }
+
+    while (1)
     {
         getline(line);              // read line sensor
 
