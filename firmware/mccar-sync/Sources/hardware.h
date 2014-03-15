@@ -234,7 +234,9 @@ D: High drive strength enabled (PTxDS)
 //### IIC Slave addresses ###
 //--- Quadrature encoder ---
 #define IIC_ADR_ENCODER (0x54)
+//--- Color sensor ---
 #define IIC_ADR_COLOR   (0x39)
+//--- Acceleration sensor ---
 #define IIC_ADR_ACCEL   (0x1c)
 
 //### Motor control ###
