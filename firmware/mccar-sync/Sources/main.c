@@ -49,6 +49,11 @@ void main(void)
 
     while(getjoystick() != PUSH){}  // Wait until joystick is pushed
 
+    status = i2c_start(IIC_ADR_ENCODER, I2C_WRITE);
+    status = i2c_sendbyte(0x00);
+    status = i2c_sendbyte(0x10);
+    i2c_stop();
+
     while (1)
     {
         status = i2c_start(IIC_ADR_ENCODER, I2C_WRITE);
