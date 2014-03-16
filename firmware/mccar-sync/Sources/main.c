@@ -19,25 +19,11 @@
 #include "platform.h" /* include peripheral declarations */
 #include "hardware.h" /* include lowlevel hardware declarations */
 
-//uint8 leftSpeeds[] =    { 810, 960, 1010 };               Buggy Code, but stil works
-//uint8 rightSpeeds[] =   { 800, 950, 1000 };
-//uint16 leftSpeeds[] =    { 810, 960, 1010 };
-//uint16 rightSpeeds[] =   { 800, 950, 1000 };
+#define STARTCMD 0x00
+#define ENDCMD   0x0b
+
 uint16 leftSpeeds[] =    { 730, 870, 910 };
 uint16 rightSpeeds[] =   { 720, 860, 900 };
-//uint16 leftSpeeds2[] =  {  800,  825,  850,  875,  900,  925,  950,  975 };
-//uint16 rightspeeds2[] = {  975,  950,  925,  900,  875,  850,  825,  800 };
-//uint16 speeds[] =  { 800, 810, 820, 835, 860, 890, 930, 975 };
-//uint16 speeds[] =  { 800, 850, 885, 910, 930, 945, 960, 975 };
-//uint16 speeds[] =  { 750, 780, 810, 840, 870, 900, 930, 960 };
-//uint16 speeds[] =  { 700, 740, 780, 820, 860, 900, 940, 980 };
-//uint16 speeds[] =  { 700, 710, 740, 820, 920, 970, 990, 1000 };
-//uint16 speeds[] =  { 700, 705, 720, 750, 810, 890, 930, 950 };
-//uint16 speeds[] =  { 700, 780, 820, 840, 850, 870, 900, 940 };
-//uint16 speeds[] =  { 700, 780, 860, 920, 960, 980, 990, 1000 };
-//uint16 speeds[] =  { 650, 720, 790, 860, 920, 960, 985, 1000 };
-//uint16 speeds[] =  { 600, 720, 820, 880, 920, 950, 975, 1000 };
-//uint16 speeds[] =  { 600, 800, 950, 1000, 1000, 1000, 1000, 1000 };
 uint16 speeds[] =  { 500, 700, 800, 900, 970, 1000, 1000, 1000 };
 
 /**
@@ -52,8 +38,7 @@ void main(void)
     uint16 line[8];
     //uint8 lowestline;
     //uint16 lowestvalue;
-    uint8 data;
-    uint8 cmd = 0x05;
+    uint8 data[(ENDCMD - STARTCMD + 1)];
 
     hardware_lowlevel_init();
     EnableInterrupts;               // Interrupts aktivieren
@@ -73,7 +58,7 @@ void main(void)
         IICS_IICIF = 1;                 // clear interrupt flag
         if (!IICS_RXAK)                 // slave present? 
         {
-            IICD = cmd;                 // send command
+            IICD = STARTCMD;                 // send command
             while (!IICS_IICIF){}       // wait until command has been sent
             IICS_IICIF = 1;             // clear interrupt flag
             IICC1_RSTA = 1;             // send start condition again to change mode
@@ -83,12 +68,21 @@ void main(void)
             {
                 IICS_IICIF = 1;         // clear interrupt flag
                 IICC_TX = 0;            // receive byte from slave
-                IICC_TXAK = 1;          // send ack because this is the last byte
-                data = IICD;            // read data register to start communication
-                while (!IICS_IICIF){}   // wait until data has been received
-                IICS_IICIF = 1;         // clear interrupt flag
+                IICC_TXAK = 0;          // send no ack because this is not the last byte
+                data[0] = IICD;         // read data register to start communication
+                for (i = 0; i <= (ENDCMD - STARTCMD); i++)  // go through all registers
+                {
+                    while (!IICS_IICIF){}   // wait until data has been received
+                    IICS_IICIF = 1;     // clear interrupt flag
+                    if (i == (ENDCMD - STARTCMD))
+                    {
+                        IICC_TXAK = 1;  // send ack if receiving last byte     
+                        IICC1_MST = 0;  // send stop condition
+                    }
+                    data[i] = IICD;     // copy data
+                }
                 IICC1_MST = 0;          // send stop condition
-                data = IICD;            // copy data
+                IICS_IICIF = 1;         // clear interrupt flag
             }
             else                        // slave does not respond
             {
