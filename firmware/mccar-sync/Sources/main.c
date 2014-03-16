@@ -16,8 +16,9 @@
  * $Id: main.c 485 2014-06-03 21:17:55Z daniw $
  *--------------------------------------------------------------------
  */
-#include "platform.h" /* include peripheral declarations */
-#include "hardware.h" /* include lowlevel hardware declarations */
+#include "platform.h"   /* include peripheral declarations */
+#include "hardware.h"   /* include lowlevel hardware declarations */
+#include "i2c.h"        /* include i2c module drivers */
 
 #define STARTCMD 0x00
 #define ENDCMD   0x0b
@@ -39,6 +40,7 @@ void main(void)
     //uint8 lowestline;
     //uint16 lowestvalue;
     uint8 data[(ENDCMD - STARTCMD + 1)];
+    Com_Status_t status;
 
     hardware_lowlevel_init();
     EnableInterrupts;               // Interrupts aktivieren
@@ -49,52 +51,12 @@ void main(void)
 
     while (1)
     {
-        while (IICS_BUSY){}             // wait until i2c module is ready
-
-        IICC1_TX = 1;                   // prepare module for sending data to slave
-        IICC1_MST = 1;                  // 
-        IICD = (IIC_ADR_ENCODER << 1);  // start communication
-        while (!IICS_IICIF){}           // Wait until address has been sent
-        IICS_IICIF = 1;                 // clear interrupt flag
-        if (!IICS_RXAK)                 // slave present? 
-        {
-            IICD = STARTCMD;                 // send command
-            while (!IICS_IICIF){}       // wait until command has been sent
-            IICS_IICIF = 1;             // clear interrupt flag
-            IICC1_RSTA = 1;             // send start condition again to change mode
-            IICD = (IIC_ADR_ENCODER << 1) | 1;     // send address again with changed mode
-            while(!IICS_IICIF){}        // wait until address has been sent
-            if (!IICS_RXAK)             // slave present? 
-            {
-                IICS_IICIF = 1;         // clear interrupt flag
-                IICC_TX = 0;            // receive byte from slave
-                IICC_TXAK = 0;          // send no ack because this is not the last byte
-                data[0] = IICD;         // read data register to start communication
-                for (i = 0; i <= (ENDCMD - STARTCMD); i++)  // go through all registers
-                {
-                    while (!IICS_IICIF){}   // wait until data has been received
-                    IICS_IICIF = 1;     // clear interrupt flag
-                    if (i == (ENDCMD - STARTCMD))
-                    {
-                        IICC_TXAK = 1;  // send ack if receiving last byte     
-                        IICC1_MST = 0;  // send stop condition
-                    }
-                    data[i] = IICD;     // copy data
-                }
-                IICC1_MST = 0;          // send stop condition
-                IICS_IICIF = 1;         // clear interrupt flag
-            }
-            else                        // slave does not respond
-            {
-                IICC1_MST = 0;          // stop transmission
-                IICS_IICIF = 1;         // clear interrupt flag
-            }
-        }
-        else                            // slave does not respond
-        {
-            IICC1_MST = 0;              // stop transmission
-            IICS_IICIF = 1;             // clear interrupt flag
-        }
+        status = i2c_start(IIC_ADR_ENCODER, I2C_WRITE);
+        status = i2c_sendbyte(0x00);
+//        status = i2c_sendbyte(0x10);
+        status = i2c_restart(IIC_ADR_ENCODER, I2C_READ);
+        i2c_readdata(data, sizeof(data));
+        i2c_stop();
     }
 
     while (1)
