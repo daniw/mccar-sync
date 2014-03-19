@@ -21,7 +21,7 @@ Com_Status_t i2c_start(uint8 address, I2C_Dir_t dir)
 
     IICC1_TX = 1;                           // prepare module for sending address to slave
     IICC1_MST = 1;                          // generate start condition
-    IICD = (address << 1) | (dir == I2C_WRITE?0:1); // start communication by sending slave address and data direction bit
+    IICD = (address << 1) | ((dir == I2C_WRITE)?0:1); // start communication by sending slave address and data direction bit
     while (!IICS_IICIF){}                   // wait until address has been sent
     IICS_IICIF = 1;                         // clear interrupt flag
 
@@ -54,7 +54,7 @@ void i2c_stop(void)
 Com_Status_t i2c_restart(uint8 address, I2C_Dir_t dir)
 {
     IICC1_RSTA = 1;                         // send start condition again to change data direction
-    IICD = (address << 1) | (dir == I2C_WRITE?0:1); // start communication by sending slave address and data direction bit
+    IICD = (address << 1) | ((dir == I2C_WRITE)?0:1); // start communication by sending slave address and data direction bit
     while (!IICS_IICIF){}                   // wait until address has been sent
     IICS_IICIF = 1;                         // clear interrupt flag
 
