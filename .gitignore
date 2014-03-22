@@ -12,3 +12,5 @@
 */*/Generated_Code
 */*.apconfig
 */*.traceConfig
+
+datasheets/*.pdf
