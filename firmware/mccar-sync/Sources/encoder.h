@@ -10,6 +10,8 @@
 
 #include "i2c.h"
 
+#define ENC_DATA_SIZE 13        // Size of encoder memory
+
 typedef enum Enc_Mode_
 {
     ENC_OFF,

@@ -21,9 +21,6 @@
 #include "i2c.h"        /* include i2c module drivers */
 #include "encoder.h"    /* include encoder driver */
 
-#define STARTCMD 0x00
-#define ENDCMD   0x0c
-
 uint16 leftSpeeds[] =    { 730, 870, 910 };
 uint16 rightSpeeds[] =   { 720, 860, 900 };
 uint16 speeds[] =  { 500, 700, 800, 900, 970, 1000, 1000, 1000 };
@@ -40,7 +37,7 @@ void main(void)
     uint16 line[8];
     //uint8 lowestline;
     //uint16 lowestvalue;
-    uint8 data[(ENDCMD - STARTCMD + 1)];
+    uint8 data[ENC_DATA_SIZE];
     Com_Status_t status;
     enc_setup_t setup;
     setup.byte = 0x00;

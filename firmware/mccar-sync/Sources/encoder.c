@@ -32,7 +32,7 @@ Com_Status_t readencoder(uint8 *data)
     com_status = i2c_start(IIC_ADR_ENCODER, I2C_WRITE);
     com_status |= i2c_sendbyte(0x00);
     com_status |= i2c_restart(IIC_ADR_ENCODER, I2C_READ);
-    i2c_readdata(data, 13);
+    i2c_readdata(data, ENC_DATA_SIZE);
     i2c_stop();
     return com_status;
 }
