@@ -28,7 +28,7 @@ void main(void)
 {
     Direction_t d = STOP;
     uint16 line[8];
-    uint8 data[ENC_DATA_SIZE];
+    enc_data_t data;
     Com_Status_t status;
     enc_setup_t setup;
     setup.byte = 0x00;
@@ -45,7 +45,7 @@ void main(void)
 
     while (1)
     {
-        status = readencoder(data);
+        status = readencoder(&data);
     }
 
     for(;;) 

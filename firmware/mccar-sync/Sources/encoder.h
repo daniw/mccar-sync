@@ -46,6 +46,37 @@ typedef union enc_setup_
     } mergedflags;
 } enc_setup_t;
 
+typedef union enc_data_
+{
+    uint8 array[ENC_DATA_SIZE];
+    struct bytes_
+    {
+        enc_setup_t setup;
+        uint8       speed_l_high;
+        uint8       speed_l_low;
+        uint8       speed_r_high;
+        uint8       speed_r_low;
+        uint8       ticks_l_high;
+        uint8       ticks_l_low;
+        uint8       ticks_r_high;
+        uint8       ticks_r_low;
+        uint8       error_l;
+        uint8       error_r;
+        uint8       carrier_mod_high;
+        uint8       carrier_mod_low;
+    } bytes;
+    struct fields_
+    {
+        enc_setup_t setup;
+        uint16      speed_l;
+        uint16      speed_r;
+        uint16      ticks_l;
+        uint16      ticks_r;
+        uint8       error_l;
+        uint8       error_r;
+        uint16      carrier_mod_high;
+    } fields;
+} enc_data_t;
 
 
 /**
@@ -59,7 +90,7 @@ Com_Status_t testencoder();
  * @param *data pointer to an array to store status. Needs to be minimum 12 bytes long. 
  * @return response if encoder present
  */
-Com_Status_t readencoder(uint8 *data);
+Com_Status_t readencoder(enc_data_t *data);
 
 /**
  * Function to set up encoder
