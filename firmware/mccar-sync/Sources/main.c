@@ -21,22 +21,13 @@
 #include "i2c.h"        /* include i2c module drivers */
 #include "encoder.h"    /* include encoder driver */
 
-uint16 leftSpeeds[] =    { 730, 870, 910 };
-uint16 rightSpeeds[] =   { 720, 860, 900 };
-uint16 speeds[] =  { 500, 700, 800, 900, 970, 1000, 1000, 1000 };
-
 /**
  * main program
  */  
 void main(void) 
 {
-    uint16 leftspeed = 0;
-    uint16 rightspeed = 0;
-    uint16 i;
     Direction_t d = STOP;
     uint16 line[8];
-    //uint8 lowestline;
-    //uint16 lowestvalue;
     uint8 data[ENC_DATA_SIZE];
     Com_Status_t status;
     enc_setup_t setup;
@@ -57,47 +48,6 @@ void main(void)
         status = readencoder(data);
     }
 
-    while (1)
-    {
-        getline(line);              // read line sensor
-
-        leftspeed = 1010;           // Values for adi
-        rightspeed = 1000;
-//        leftspeed = 1020;           // Values for daniw
-//        rightspeed = 980;
-
-        for (i = 0; i < 3; ++i)     // calculate speed based on position of line below the car. 
-        {
-        	if (line[i] < 100)
-        	{
-                leftspeed = leftSpeeds[i];
-        	}
-        	if (line[7 - i] < 100)
-        	{
-                rightspeed = rightSpeeds[i];
-        	}
-        }
-        
-/*        lowestvalue = line[0];
-        lowestline = 0;
-        
-        for (i = 1; i < 8; i++)
-        {
-            if (line[i] < lowestvalue)
-            {
-                lowestvalue = line[i];
-                lowestline = (uint8) i;
-            }
-        }
-        
-        leftspeed = speeds[lowestline];
-        rightspeed = speeds[7- lowestline];
-*/
-        //leftspeed = 1020;                             // Calibrating motors to drive straight
-        //rightspeed = 980;
-        motorcontrol(FORWARD, leftspeed, rightspeed);   // drive motors with calculated speed
-    }
-    
     for(;;) 
     {   
         __RESET_WATCHDOG();  /* feeds the dog */
