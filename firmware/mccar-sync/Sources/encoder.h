@@ -68,10 +68,10 @@ typedef union enc_data_
     struct fields_
     {
         enc_setup_t setup;
-        uint16      speed_l;
-        uint16      speed_r;
-        uint16      ticks_l;
-        uint16      ticks_r;
+        int16       speed_l;
+        int16       speed_r;
+        int16       ticks_l;
+        int16       ticks_r;
         uint8       error_l;
         uint8       error_r;
         uint16      carrier_mod_high;
