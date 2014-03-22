@@ -19,9 +19,10 @@
 #include "platform.h"   /* include peripheral declarations */
 #include "hardware.h"   /* include lowlevel hardware declarations */
 #include "i2c.h"        /* include i2c module drivers */
+#include "encoder.h"    /* include encoder driver */
 
 #define STARTCMD 0x00
-#define ENDCMD   0x0b
+#define ENDCMD   0x0c
 
 uint16 leftSpeeds[] =    { 730, 870, 910 };
 uint16 rightSpeeds[] =   { 720, 860, 900 };
@@ -41,6 +42,9 @@ void main(void)
     //uint16 lowestvalue;
     uint8 data[(ENDCMD - STARTCMD + 1)];
     Com_Status_t status;
+    enc_setup_t setup;
+    setup.byte = 0x00;
+    setup.flags.carrieren = 1;
 
     hardware_lowlevel_init();
     EnableInterrupts;               // Interrupts aktivieren
@@ -49,19 +53,11 @@ void main(void)
 
     while(getjoystick() != PUSH){}  // Wait until joystick is pushed
 
-    status = i2c_start(IIC_ADR_ENCODER, I2C_WRITE);
-    status = i2c_sendbyte(0x00);
-    status = i2c_sendbyte(0x10);
-    i2c_stop();
+    status = setupencoder(setup);
 
     while (1)
     {
-        status = i2c_start(IIC_ADR_ENCODER, I2C_WRITE);
-        status = i2c_sendbyte(0x00);
-//        status = i2c_sendbyte(0x10);
-        status = i2c_restart(IIC_ADR_ENCODER, I2C_READ);
-        i2c_readdata(data, sizeof(data));
-        i2c_stop();
+        status = readencoder(data);
     }
 
     while (1)
