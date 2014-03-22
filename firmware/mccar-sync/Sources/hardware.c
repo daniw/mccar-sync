@@ -9,7 +9,7 @@
 #include "hardware.h"
 
 /**
- * Initialize clock module, ports and timer
+ * Initialise clock module, ports and timer
  * @author daniw
  */
 void hardware_lowlevel_init(void) 
@@ -19,9 +19,11 @@ void hardware_lowlevel_init(void)
      * After startup the clock system is in FEI mode. To change to PEE mode the 
      * clock system has to be changed in the following order: 
      * FEI -> FBE -> BLPE -> PBE -> PEE 
+     * CAUTION! 
+     * Keep CLOCK in hardware.h in sync with bus clock selected here!
      */
     //--- FEI -> FBE ---
-    // Start external crystal oszillator
+    // Start external crystal oscillator
     MCGC2 = MCGC2_RANGE_MASK | MCGC2_HGO_MASK | MCGC2_EREFS_MASK | MCGC2_ERCLKEN_MASK;
     // Wait for crystal oscillator to be ready
     while(!MCGSC_OSCINIT);
@@ -57,7 +59,7 @@ void hardware_lowlevel_init(void)
     // Wait until MCGSC is selected
     while(MCGSC_CLKST != 3);
     // MCGOUT is now configured for a frequency of 48 MHz
-    // The bus frequency is 24 MHz
+    // The bus frequency is 24 MHz => Keep CLOCK in hardware.h in sync! 
 
     //### I/O Ports ###
     //--- PortA ---
@@ -156,6 +158,8 @@ void hardware_lowlevel_init(void)
 //### Motor control ###
 /**
  * This function controls both motors of the mccar.
+ * The input variables can be in a range of 0 to 0xffff but may be shortened 
+ * to a lower number of bits depending on the timer resolution. 
  * @author daniw
  * @param dir direction, to which the mccar should drive
  * @param speedleft speed of the left motor
@@ -205,8 +209,8 @@ void motorcontrol(Direction_t dir, uint16 speedleft, uint16 speedright)
             break;
     }
     PTDD &= ~(MOTL_A | MOTL_B | MOTR_A | MOTR_B);
-    TPM2C0V = speedright;
-    TPM2C1V = speedleft;
+    TPM2C0V = (speedright >> (16 - MOT_RESOLUTION));
+    TPM2C1V = (speedleft  >> (16 - MOT_RESOLUTION));
 }
 
 

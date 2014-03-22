@@ -10,6 +10,12 @@
 
 #include "platform.h"
 
+#define CLOCK           24000000    // Bus clock frequency in Hz
+#define MOT_RESOLUTION  10          // Motor control resolution in number of bits
+#define ADC_RESOLUTION  12          // ADC Resolution in number of bits
+#define BUZZER_FREQ     1000        // Buzzer frequency in Hz
+#define BUZZER_SAMPLE   48000       // Buzzer sampling rate for streaming audio data in Hz
+
 /*
 PINS: 
 Comment-Abbreviations: 
@@ -147,19 +153,13 @@ D: High drive strength enabled (PTxDS)
 // bus rate clock, prescaler 4
 #define TPM1SC_INIT     (TPM1SC_CLKSA_MASK | TPM1SC_PS1_MASK)
 // Initial value for a frequency of 1 kHz on Buzzer
-#define TPM1MOD_INIT    (3000)
+#define TPM1MOD_INIT    (CLOCK/BUZZER_FREQ)
 
 //--- Initialisation for driving the buzzer with PWM ---
 // bus rate clock, no prescaler
 //#define TPM1SC_INIT     (TPM1SC_CLKSA_MASK)
-// Modulo for a sampling rate of 96 kHz
-//#define TPM1MOD_INIT    (250)
-// Modulo for a sampling rate of 48 kHz
-//#define TPM1MOD_INIT    (500)
-// Modulo for a sampling rate of 44.1 kHz
-//#define TPM1MOD_INIT    (544)
-// Modulo for a sampling rate of 32 kHz
-//#define TPM1MOD_INIT    (750)
+// Modulo for a sampling rate 48 kHz
+//#define TPM1MOD_INIT    (CLOCK/BUZZER_SAMPLE)
 // Not in use
 #define TPM1C0SC_INIT   (0)
 // Not in use
@@ -190,9 +190,7 @@ D: High drive strength enabled (PTxDS)
 // bus rate clock, no prescaler
 #define TPM2SC_INIT     (TPM2SC_CLKSA_MASK)
 // Motor control with 10 bit resolution and a frequency of 23.4 kHz
-#define TPM2MOD_INIT    (1023)
-// Motor control with 8 bit resolution and a frequency of 93.75 kHz
-//#define TPM2MOD_INIT    (255)
+#define TPM2MOD_INIT    ((1<<MOT_RESOLUTION) + 1)
 // Edge aligned PWM for both motors
 #define TPM2C0SC_INIT   (TPM2C0SC_MS0B_MASK | TPM2C0SC_ELS0B_MASK)
 #define TPM2C1SC_INIT   (TPM2C0SC_MS0B_MASK | TPM2C0SC_ELS0B_MASK)
@@ -233,7 +231,7 @@ D: High drive strength enabled (PTxDS)
 
 //### IIC Slave addresses ###
 //--- Quadrature encoder ---
-//#define IIC_ADR_ENCODER (0x54) Wrong in description
+//#define IIC_ADR_ENCODER (0x54)      // Wrong in description
 #define IIC_ADR_ENCODER (0x2A)
 //--- Color sensor ---
 #define IIC_ADR_COLOR   (0x39)
