@@ -30,6 +30,7 @@ void main(void)
     uint16 line[8];
     enc_data_t data;
     Com_Status_t status;
+    unsigned char myirtimer = 0;
     enc_setup_t setup;
     setup.byte = 0x00;
     setup.flags.carrieren = 1;
@@ -42,10 +43,31 @@ void main(void)
     while(getjoystick() != PUSH){}  // Wait until joystick is pushed
 
     status = setupencoder(setup);
+    PTED |= IR_FM;                  // switch front IR LED on to detect obstacles in front of MCCar
 
     while (1)
     {
         status = readencoder(&data);
+        if(myirtimer++ < 3)
+        {
+            PTED |= IR_FM;
+        }
+        else
+        {
+            PTED &= ~IR_FM;
+        }
+        if((PTED & IR_RX_F))
+        {
+            PTDD &= ~LED_B;
+        }
+        else
+        {
+            PTDD |= LED_B;
+        }
+        if(myirtimer > 30)
+        {
+            myirtimer = 0;
+        }
     }
 
     for(;;) 
