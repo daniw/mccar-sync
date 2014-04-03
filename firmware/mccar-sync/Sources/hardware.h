@@ -15,10 +15,27 @@
 #define ADC_RESOLUTION  12          // ADC Resolution in number of bits
 #define BUZZER_FREQ     1000        // Buzzer frequency in Hz
 #define BUZZER_SAMPLE   48000       // Buzzer sampling rate for streaming audio data in Hz
+#define BT_BAUD         9600        // Baud rate for bluetooth module
+#define BT_PRESCALER    CLOCK/BT_BAUD / 16  // Prescaler for bluetooth module
+#define BT_PRESC_LOW    BT_PRESCALER
+#define BT_PRESC_HIGH   BT_PRESCALER / 0x100
+// Check if baud rate for bluetooth module can be set correct
+#define BT_BAUD_REAL    CLOCK / 16 / (BT_PRESC_HIGH * 0x100 + BT_PRESC_LOW)
+#define BT_BAUD_MAXERR  40
+#define BT_BAUD_MAX     (BT_BAUD * (1000 + BT_BAUD_MAXERR))
+#define BT_BAUD_MIN     (BT_BAUD * (1000 - BT_BAUD_MAXERR))
+#if BT_PRESC_HIGH > 0x1f
+    #error "Prescaler value for bluetooth module too high!"
+#else
+    // The following test does not work caused by an integer overflow
+    #if (1000 * BT_BAUD_REAL > BT_BAUD_MAX) || (1000 * BT_BAUD_REAL < BT_BAUD_MIN)
+        #warning "Baud rate error for bluetooth module may be too high"
+    #endif
+#endif
 
 /*
-PINS: 
-Comment-Abbreviations: 
+PINS:
+Comment-Abbreviations:
 I: Input, O: Output (PTxDD)
 L: Low, H: High (PTxD)
 R: Pullup Resistor active (PTxPE)
@@ -90,7 +107,7 @@ D: High drive strength enabled (PTxDS)
 #define U_MON           BIT1    ///< |I|    Voltage monitor
 #define LED_B           BIT2    ///< |OL|   Backlight
 #define CHG_STAT        BIT3    ///< |I|    Charge status
-#define MOTL_A          BIT4    ///< |OL|   Motor left channel A 
+#define MOTL_A          BIT4    ///< |OL|   Motor left channel A
 #define MOTL_B          BIT5    ///< |OL|   Motor left channel B
 #define MOTR_A          BIT6    ///< |OL|   Motor right channel A
 #define MOTR_B          BIT7    ///< |OL|   Motor right channel B
