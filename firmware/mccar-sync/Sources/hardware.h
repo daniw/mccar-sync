@@ -21,14 +21,15 @@
 #define BT_PRESC_HIGH   BT_PRESCALER / 0x100
 // Check if baud rate for bluetooth module can be set correct
 #define BT_BAUD_REAL    CLOCK / 16 / (BT_PRESC_HIGH * 0x100 + BT_PRESC_LOW)
-#define BT_BAUD_MAXERR  40
-#define BT_BAUD_MAX     (BT_BAUD * (1000 + BT_BAUD_MAXERR))
-#define BT_BAUD_MIN     (BT_BAUD * (1000 - BT_BAUD_MAXERR))
+#define BT_BAUD_MAXERR  20          // Maximum error tolerated in permilles
+#define BT_BAUD_MAXDIFF BT_BAUD * BT_BAUD_MAXERR / 1000
+#define BT_BAUD_MAX     (BT_BAUD + BT_BAUD_MAXDIFF)
+#define BT_BAUD_MIN     (BT_BAUD - BT_BAUD_MAXDIFF)
 #if BT_PRESC_HIGH > 0x1f
     #error "Prescaler value for bluetooth module too high!"
 #else
     // The following test does not work caused by an integer overflow
-    #if (1000 * BT_BAUD_REAL > BT_BAUD_MAX) || (1000 * BT_BAUD_REAL < BT_BAUD_MIN)
+    #if ((BT_BAUD_REAL > BT_BAUD_MAX) || (BT_BAUD_REAL < BT_BAUD_MIN))
         #warning "Baud rate error for bluetooth module may be too high"
     #endif
 #endif
