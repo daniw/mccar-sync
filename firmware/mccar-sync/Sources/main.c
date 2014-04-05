@@ -23,8 +23,8 @@
 
 /**
  * main program
- */  
-void main(void) 
+ */
+void main(void)
 {
     Direction_t d = STOP;
     uint16 line[8];
@@ -70,10 +70,10 @@ void main(void)
         }
     }
 
-    for(;;) 
-    {   
+    for(;;)
+    {
         __RESET_WATCHDOG();  /* feeds the dog */
     }
-    
+
   /* please make sure that you never leave main */
 }

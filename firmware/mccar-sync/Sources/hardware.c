@@ -12,14 +12,14 @@
  * Initialise clock module, ports and timer
  * @author daniw
  */
-void hardware_lowlevel_init(void) 
+void hardware_lowlevel_init(void)
 {
     //### Clock system ###
     /*
-     * After startup the clock system is in FEI mode. To change to PEE mode the 
-     * clock system has to be changed in the following order: 
-     * FEI -> FBE -> BLPE -> PBE -> PEE 
-     * CAUTION! 
+     * After startup the clock system is in FEI mode. To change to PEE mode the
+     * clock system has to be changed in the following order:
+     * FEI -> FBE -> BLPE -> PBE -> PEE
+     * CAUTION!
      * Keep CLOCK in hardware.h in sync with bus clock selected here!
      */
     //--- FEI -> FBE ---
@@ -42,7 +42,7 @@ void hardware_lowlevel_init(void)
     // Interrupts can now be re-enabled
     /* EnableInterrupts */
     // Divide external clock by 4
-    MCGC1_RDIV = 2; 
+    MCGC1_RDIV = 2;
     // Prepare PLL  and set multiplier to 24 to achieve 48 MHz
     MCGC3_PLLS = 1;
     MCGC3_VDIV = 6;
@@ -59,7 +59,7 @@ void hardware_lowlevel_init(void)
     // Wait until MCGSC is selected
     while(MCGSC_CLKST != 3);
     // MCGOUT is now configured for a frequency of 48 MHz
-    // The bus frequency is 24 MHz => Keep CLOCK in hardware.h in sync! 
+    // The bus frequency is 24 MHz => Keep CLOCK in hardware.h in sync!
 
     //### I/O Ports ###
     //--- PortA ---
@@ -152,14 +152,22 @@ void hardware_lowlevel_init(void)
     IICS = IICS_INIT;
     IICD = IICD_INIT;
     IICC2 = IICC2_INIT;
+
+    //### SCI Bus to bluetooth module ###
+    SCI1BDH = SCI1BDH_INIT;
+    SCI1BDL = SCI1BDL_INIT;
+    SCI1C1 = SCI1C1_INIT;
+    SCI1C2 = SCI1C2_INIT;
+    SCI1C2 = SCI1S2_INIT;
+    SCI1C3 = SCI1C3_INIT;
 }
 
 
 //### Motor control ###
 /**
  * This function controls both motors of the mccar.
- * The input variables can be in a range of 0 to 0xffff but may be shortened 
- * to a lower number of bits depending on the timer resolution. 
+ * The input variables can be in a range of 0 to 0xffff but may be shortened
+ * to a lower number of bits depending on the timer resolution.
  * @author daniw
  * @param dir direction, to which the mccar should drive
  * @param speedleft speed of the left motor
@@ -275,7 +283,7 @@ void getline(uint16* line)
         //line[i] = ADCR;                 // without dark correction
         line[i] = ADCR > linedark ? ADCR - linedark : 0;    // calculate difference to eliminate environmental light
     }
-    
+
 }
 
 

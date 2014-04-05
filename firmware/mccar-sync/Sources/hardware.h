@@ -83,7 +83,7 @@ D: High drive strength enabled (PTxDS)
 #define LS_REC_L        BIT7    ///< |I|    Line sensor IR receiver left
 
 #define PTBDD_INIT      (BT_EN)
-#define PTBD_INIT       (0)
+#define PTBD_INIT       (BT_EN)
 #define PTBPE_INIT      (SPI_MISO | SPI_MOSI| SPI_SCK)
 #define PTBSE_INIT      (0)
 #define PTBDS_INIT      (0)
@@ -255,6 +255,23 @@ D: High drive strength enabled (PTxDS)
 #define IIC_ADR_COLOR   (0x39)
 //--- Acceleration sensor ---
 #define IIC_ADR_ACCEL   (0x1c)
+
+
+//### SCI interface to bluetooth module ###
+//--- SCI Baud rate ---
+#define SCI1BDH_INIT    (BT_PRESC_HIGH)
+#define SCI1BDL_INIT    (BT_PRESC_LOW)
+//--- 8 Bit, no parity ---
+#define SCI1C1_INIT     (0)
+//--- Enable Receiver and Transmitter, RX not inverted, no interrupts enabled yet ---
+#define SCI1C2_INIT     (SCI1C2_TE_MASK | SCI1C2_RE_MASK)
+//--- no writable bits in SCI1S1 ---
+//#define SCI1S1_INIT
+//--- No specific settings here ---
+#define SCI1S2_INIT     (0)
+//--- TX not inverted, no interrupts enabled yet ---
+#define SCI1C3_INIT     (0)
+
 
 //### Motor control ###
 //--- Directions for mccar to drive ---
