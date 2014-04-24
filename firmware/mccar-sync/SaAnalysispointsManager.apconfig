@@ -1,6 +1,6 @@
 <Analysispoints>
 	<Name>AnalysispointsManager</Name>
-	<ProjectPath>C:/cygwin64/home/daniw/data/ele/prj/mccar-sync/firmware/mccar-sync/SaAnalysispointsManager.apconfig</ProjectPath>
+	<ProjectPath>Z:/ele/prj/mccar-sync/firmware/mccar-sync/SaAnalysispointsManager.apconfig</ProjectPath>
 	<MaxNumberOfCores>1</MaxNumberOfCores>
 	<Comments>Analysispoints Manager</Comments>
 	<IgnoreAll>false</IgnoreAll>
