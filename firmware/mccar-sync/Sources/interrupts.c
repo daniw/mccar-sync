@@ -4,7 +4,7 @@
  *  Created on: Mar 15, 2014
  *      Author: daniw
  */
-
+#include "interrupts.h"
 
 interrupt void isr_RTC(void)        // RTC
 {
@@ -18,7 +18,7 @@ interrupt void isr_IIC(void)        // IIC
 
 interrupt void isr_ACMP(void)       // ACMP
 {
-    retutn;
+    return;
 }
 
 interrupt void isr_ADC(void)        // ADC Conversion
@@ -28,7 +28,7 @@ interrupt void isr_ADC(void)        // ADC Conversion
 
 interrupt void isr_KBI(void)        // KBI Keyboard
 {
-    retutn;
+    return;
 }
 
 interrupt void isr_SCI2T(void)      // SCI2 transmit
@@ -53,6 +53,17 @@ interrupt void isr_SCI1T(void)      // SCI1 transmit
 
 interrupt void isr_SCI1R(void)      // SCI1 receive
 {
+	uint8 temp;
+	if (SCI1S1_RDRF)
+	{
+
+		temp = SCI1D;
+		SCI1D = temp;
+	}
+	else
+	{
+		temp = SCI1D;
+	}
     return;
 }
 

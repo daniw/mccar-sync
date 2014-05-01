@@ -158,7 +158,7 @@ void hardware_lowlevel_init(void)
     SCI1BDL = SCI1BDL_INIT;
     SCI1C1 = SCI1C1_INIT;
     SCI1C2 = SCI1C2_INIT;
-    SCI1C2 = SCI1S2_INIT;
+    SCI1C2 = SCI1C2_INIT;
     SCI1C3 = SCI1C3_INIT;
 }
 

@@ -264,7 +264,7 @@ D: High drive strength enabled (PTxDS)
 //--- 8 Bit, no parity ---
 #define SCI1C1_INIT     (0)
 //--- Enable Receiver and Transmitter, RX not inverted, no interrupts enabled yet ---
-#define SCI1C2_INIT     (SCI1C2_TE_MASK | SCI1C2_RE_MASK)
+#define SCI1C2_INIT     (SCI2C2_RIE_MASK | SCI1C2_TE_MASK | SCI1C2_RE_MASK)
 //--- no writable bits in SCI1S1 ---
 //#define SCI1S1_INIT
 //--- No specific settings here ---
