@@ -21,13 +21,18 @@
 #include "i2c.h"        /* include i2c module drivers */
 #include "encoder.h"    /* include encoder driver */
 
+#define STEERING 0x2000
+
 uint8 driveval = 0;
+int16 trimsteering = 0;
 
 /**
  * main program
  */
 void main(void)
 {
+    uint16 speedleft = 0;
+    uint16 speedright = 0;
     Direction_t d = STOP;
     uint16 line[8];
     enc_data_t data;
@@ -71,31 +76,42 @@ void main(void)
             myirtimer = 0;
         }
 
-        switch (driveval)
+        speedleft = 0xffff;
+        speedright = 0xffff;
+        if (trimsteering > 0)
+        {
+        	speedleft -= trimsteering;
+        }
+        else
+        {
+        	speedright += trimsteering;
+        }
+
+        switch (driveval & 0x0f)
         {
         case 0x01:
-        	motorcontrol(FORWARD,0xffff,0xffff);
+        	motorcontrol(FORWARD,speedleft,speedright);
         	break;
         case 0x09:
-        	motorcontrol(FORWARD,0xefff,0xffff);
+        	motorcontrol(FORWARD,speedleft - STEERING,speedright);
         	break;
         case 0x08:
-        	motorcontrol(CURVELEFT,0x0000,0xffff);
+        	motorcontrol(CURVELEFT,0x0000,speedright);
         	break;
         case 0x0C:
-        	motorcontrol(BACKWARD,0xefff,0xffff);
+        	motorcontrol(BACKWARD,speedleft - STEERING,speedright);
         	break;
         case 0x04:
-        	motorcontrol(BACKWARD,0xffff,0xffff);
+        	motorcontrol(BACKWARD,speedleft,speedright);
         	break;
         case 0x06:
-        	motorcontrol(BACKWARD,0xffff,0xefff);
+        	motorcontrol(BACKWARD,speedleft,speedright - STEERING);
         	break;
         case 0x02:
-        	motorcontrol(CURVERIGHT,0xffff,0x0000);
+        	motorcontrol(CURVERIGHT,speedleft,0x0000);
         	break;
         case 0x03:
-        	motorcontrol(FORWARD,0xffff,0xefff);
+        	motorcontrol(FORWARD,speedleft,speedright - STEERING);
         	break;
         case 0x00:
         	motorcontrol(STOP,0x0000,0x0000);
@@ -103,6 +119,41 @@ void main(void)
         default:
         	motorcontrol(STOP,0x0000,0x0000);
         	break;
+        }
+        if (driveval & 0x10)
+        {
+        	trimsteering += 0x0001;
+        }
+        if (driveval & 0x20)
+        {
+        	trimsteering -= 0x0001;
+        }
+        /*switch (driveval & 0x30)
+        {
+        	case 0x10:
+        		PTFD_PTFD1 = 0;
+        		PTFD_PTFD2 = 1;
+        		break;
+        	case 0x20:
+        		PTFD_PTFD1 = 1;
+        		PTFD_PTFD2 = 0;
+        		break;
+        	case 0x30:
+        		PTFD_PTFD1 = 0;
+        		PTFD_PTFD2 = 0;
+        		break;
+        	default:
+        		PTFD_PTFD1 = 1;
+        		PTFD_PTFD2 = 1;
+        		break;
+        }*/
+        if (driveval & 0x40)
+        {
+        	PTFD_PTFD3 ^= 1;
+        }
+        else
+        {
+        	PTFD_PTFD3 = 0;
         }
     }
 
