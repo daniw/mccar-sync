@@ -7,15 +7,23 @@
 
 #include "bluetooth.h"
 
-// 0 init commanc mode
+static uint8 busy = 0;
+
+// 0 init command mode
 void bt_joincmdmode(void)
 {
-
+    if (!busy)
+    {
+        bt_cmdon();
+    }
 }
 
 void bt_partcmdmode(void)
 {
-
+    if (!busy)
+    {
+        bt_cmdoff();
+    }
 }
 
 // 1 test UART connection

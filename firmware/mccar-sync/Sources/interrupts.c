@@ -6,6 +6,10 @@
  */
 #include "interrupts.h"
 
+extern uint8* bt_dataptr;
+extern uint8 bt_datacnt;
+extern uint8 driveval;
+
 interrupt void isr_RTC(void)        // RTC
 {
     return;
@@ -48,6 +52,11 @@ interrupt void isr_SCI2E(void)      // SCI2 error
 
 interrupt void isr_SCI1T(void)      // SCI1 transmit
 {
+    if (bt_datacnt)
+    {
+        bt_dataptr++;
+        SCI1D = *bt_dataptr;
+    }
     return;
 }
 
@@ -59,6 +68,7 @@ interrupt void isr_SCI1R(void)      // SCI1 receive
 
 		temp = SCI1D;
 		SCI1D = temp;
+		driveval = temp;
 	}
 	else
 	{

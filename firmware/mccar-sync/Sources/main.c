@@ -21,6 +21,8 @@
 #include "i2c.h"        /* include i2c module drivers */
 #include "encoder.h"    /* include encoder driver */
 
+uint8 driveval = 0;
+
 /**
  * main program
  */
@@ -67,6 +69,40 @@ void main(void)
         if(myirtimer > 30)
         {
             myirtimer = 0;
+        }
+
+        switch (driveval)
+        {
+        case 0x01:
+        	motorcontrol(FORWARD,0xffff,0xffff);
+        	break;
+        case 0x09:
+        	motorcontrol(FORWARD,0xefff,0xffff);
+        	break;
+        case 0x08:
+        	motorcontrol(CURVELEFT,0x0000,0xffff);
+        	break;
+        case 0x0C:
+        	motorcontrol(BACKWARD,0xefff,0xffff);
+        	break;
+        case 0x04:
+        	motorcontrol(BACKWARD,0xffff,0xffff);
+        	break;
+        case 0x06:
+        	motorcontrol(BACKWARD,0xffff,0xefff);
+        	break;
+        case 0x02:
+        	motorcontrol(CURVERIGHT,0xffff,0x0000);
+        	break;
+        case 0x03:
+        	motorcontrol(FORWARD,0xffff,0xefff);
+        	break;
+        case 0x00:
+        	motorcontrol(STOP,0x0000,0x0000);
+        	break;
+        default:
+        	motorcontrol(STOP,0x0000,0x0000);
+        	break;
         }
     }
 

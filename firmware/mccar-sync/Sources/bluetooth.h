@@ -43,7 +43,7 @@ typedef enum bt_inqmode_
 
 typedef struct bt_accessmode_
 {
-    bt_inqmode mode;    // Inquire access mode
+    bt_inqmode_t mode;    // Inquire access mode
     uint16 maxnumber;   // Maximum number of devices response
     uint8 timeout;      // Inquire timeout
 } bt_accessmode_t;
@@ -70,9 +70,9 @@ typedef enum bt_stopbit_
 
 typedef enum bt_parity_
 {
-    NONE=0,             // No praity bit
-    ODD=1,              // Odd parity bit
-    EVEN=2              // Even parity bit
+    NOPARITY=0,       // No praity bit
+    ODDPARITY=1,        // Odd parity bit
+    EVENPARITY=2        // Even parity bit
 } bt_parity_t;
 
 typedef struct bt_uartparam_
@@ -95,7 +95,7 @@ typedef enum bt_pol_
     HIGHLOW,            // LED1 high active, LED2 low active
     LOWHIGH,            // LED1 low active, LED2 high active
     HIGHHIGH            // Both LED high active
-} bt_pol_t
+} bt_pol_t;
 
 typedef struct bt_scanparam_
 {
@@ -103,7 +103,7 @@ typedef struct bt_scanparam_
     uint16 duration;    // Scan time duration
     uint16 pageint;     // Page scan time interval
     uint16 pagedur;     // Page scan time duration
-} bt_scanparam_t
+} bt_scanparam_t;
 
 typedef struct bt_snifftime_
 {
@@ -111,11 +111,11 @@ typedef struct bt_snifftime_
     uint16 mintime;     // minimum time
     uint16 retry;       // retry time
     uint16 timeout;     // timeout
-} bt_snifftime_t
+} bt_snifftime_t;
 
 typedef enum bt_secmode_
 {
-    OFF=0,              // sec_mode_off
+    SECOFF=0,           // sec_mode_off
     NONSECURE,          // sec_mode1_non-secure
     SERVICE,            // sec_mode2_service
     LINK,               // sec_mode3_link
@@ -124,7 +124,7 @@ typedef enum bt_secmode_
 
 typedef enum bt_encmode_
 {
-    OFF=0,              // hci_enc_mode_off
+    ENCOFF=0,           // hci_enc_mode_off
     PTPT,               // hci_enc_mode_pt_tp_pt
     PTPTBROADCST,       // hci_enc_mode_pt_to_pt_and_bcast
 } bt_encmode_t;
@@ -133,7 +133,7 @@ typedef struct bt_secencmode_
 {
     bt_secmode_t secmode;   // security mode
     bt_encmode_t encmode;   // encryption mode
-} bt_secencmode_t
+} bt_secencmode_t;
 
 typedef enum bt_status_
 {
@@ -145,17 +145,17 @@ typedef enum bt_status_
     CONNECTING,         // connecting
     CONNECTED,          // connected
     DISCONNECTED,       // disconnected
-    UNKNOWN             // unknown
+    UNKNOWNSTATUS       // unknown
 } bt_status_t;
 
 typedef enum bt_results_
 {
-    SUCCESS,
+    BTSUCCESS,
     LINK_LOSS,
     NO_SLC,
     TIMEOUT,
     ERROR
-} bt_results_t
+} bt_results_t;
 
 // 0 init commanc mode
 void bt_joincmdmode(void);

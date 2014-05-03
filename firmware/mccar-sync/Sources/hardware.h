@@ -278,7 +278,9 @@ D: High drive strength enabled (PTxDS)
 //--- IIC master -> address not initialised yet  ---
 #define IICA_INIT       (0)
 //--- Divider 240 for a SCL frequency of 100 kHz ---
-#define IICF_INIT       (0x1f)
+//#define IICF_INIT       (0x1f)
+//--- Divider 60 for a SCL frequency of 400 kHz ---
+#define IICF_INIT       (0x45)
 //--- Enable IIC module, interrupt enabled, transmit mode,  ---
 //#define IICC1_INIT      (IICC1_IICEN_MASK | IICC1_IICIE_MASK | IICC1_TX)
 #define IICC1_INIT      (IICC1_IICEN_MASK | IICC1_TX)
@@ -369,5 +371,7 @@ void bt_off(void);
 void bt_cmdon(void);
 void bt_cmdoff(void);
 void bt_scibaud(uint16 baud);
+void bt_sendbyte(uint8 data);
+void bt_senddata(uint8* data);
 
 #endif /* HARDWARE_H_ */

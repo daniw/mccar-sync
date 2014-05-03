@@ -8,6 +8,9 @@
 #include "platform.h"
 #include "hardware.h"
 
+static uint8* bt_dataptr;
+static uint8 bt_datacnt;
+
 /**
  * Initialise clock module, ports and timer
  * @author daniw
@@ -349,7 +352,7 @@ void bt_on(void)
  */
 void bt_off(void)
 {
-    PTBD_PTBD3 = 0
+    PTBD_PTBD3 = 0;
     return;
 }
 
@@ -379,3 +382,16 @@ void bt_scibaud(uint16 baud)
     return;
 }
 
+//--- Send one Byte ---
+void bt_sendbyte(uint8 data)
+{
+    while(bt_datacnt){}     // Wait until previous data has been sent
+    SCI1D = data;
+}
+
+//--- Send data ---
+void bt_senddata(uint8* data)
+{
+    while(bt_datacnt){}
+
+}
