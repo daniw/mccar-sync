@@ -15,6 +15,8 @@
 #define ADC_RESOLUTION  12          // ADC Resolution in number of bits
 #define BUZZER_FREQ     1000        // Buzzer frequency in Hz
 #define BUZZER_SAMPLE   48000       // Buzzer sampling rate for streaming audio data in Hz
+
+//--- User defined baud rate calculation ---
 #define BT_BAUD         9600        // Baud rate for bluetooth module
 #define BT_PRESCALER    CLOCK/BT_BAUD / 16  // Prescaler for bluetooth module
 #define BT_PRESC_LOW    BT_PRESCALER
@@ -33,6 +35,47 @@
         #warning "Baud rate error for bluetooth module may be too high"
     #endif
 #endif
+
+//--- Predefined baud rates (These prescaler Values are not tested as above, so use them with caution!) ---
+#define BT_PRESCALER_4800   CLOCK/4800 / 16             // Prescaler for bluetooth module baud rate = 4800
+#define BT_PRESC_4800_LOW   BT_PRESCALER_4800
+#define BT_PRESC_4800_HIGH  BT_PRESCALER_4800 / 0x100
+
+#define BT_PRESCALER_9600   CLOCK/9600 / 16             // Prescaler for bluetooth module baud rate = 9600
+#define BT_PRESC_9600_LOW   BT_PRESCALER_9600
+#define BT_PRESC_9600_HIGH  BT_PRESCALER_9600 / 0x100
+
+#define BT_PRESCALER_19200   CLOCK/19200 / 16           // Prescaler for bluetooth module baud rate = 19200
+#define BT_PRESC_19200_LOW   BT_PRESCALER_19200
+#define BT_PRESC_19200_HIGH  BT_PRESCALER_19200 / 0x100
+
+#define BT_PRESCALER_38400   CLOCK/38400 / 16           // Prescaler for bluetooth module baud rate = 38400
+#define BT_PRESC_38400_LOW   BT_PRESCALER_38400
+#define BT_PRESC_38400_HIGH  BT_PRESCALER_38400 / 0x100
+
+#define BT_PRESCALER_57600   CLOCK/57600 / 16           // Prescaler for bluetooth module baud rate = 57600
+#define BT_PRESC_57600_LOW   BT_PRESCALER_57600
+#define BT_PRESC_57600_HIGH  BT_PRESCALER_57600 / 0x100
+
+#define BT_PRESCALER_115200   CLOCK/115200 / 16             // Prescaler for bluetooth module baud rate = 115200
+#define BT_PRESC_115200_LOW   BT_PRESCALER_115200
+#define BT_PRESC_115200_HIGH  BT_PRESCALER_115200 / 0x100
+
+#define BT_PRESCALER_234000   CLOCK/234000 / 16             // Prescaler for bluetooth module baud rate = 234000
+#define BT_PRESC_234000_LOW   BT_PRESCALER_234000
+#define BT_PRESC_234000_HIGH  BT_PRESCALER_234000 / 0x100
+
+#define BT_PRESCALER_460800   CLOCK/460800 / 16             // Prescaler for bluetooth module baud rate = 460800
+#define BT_PRESC_460800_LOW   BT_PRESCALER_460800
+#define BT_PRESC_460800_HIGH  BT_PRESCALER_460800 / 0x100
+
+#define BT_PRESCALER_921600   CLOCK/921600 / 16             // Prescaler for bluetooth module baud rate = 921600
+#define BT_PRESC_921600_LOW   BT_PRESCALER_921600
+#define BT_PRESC_921600_HIGH  BT_PRESCALER_921600 / 0x100
+
+#define BT_PRESCALER_1382400   CLOCK/1382400 / 16             // Prescaler for bluetooth module baud rate = 1382400
+#define BT_PRESC_1382400_LOW   BT_PRESCALER_1382400
+#define BT_PRESC_1382400_HIGH  BT_PRESCALER_1382400 / 0x100
 
 /*
 PINS:
@@ -321,5 +364,10 @@ uint16 getsupplyvoltage(void);
 uint16 getsupplycurrent(void);
 Chg_state_t getsupplystate(void);
 uint8 getsupplymode(void);
+void bt_on(void);
+void bt_off(void);
+void bt_cmdon(void);
+void bt_cmdoff(void);
+void bt_scibaud(uint16 baud);
 
 #endif /* HARDWARE_H_ */

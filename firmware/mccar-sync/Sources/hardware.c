@@ -331,3 +331,51 @@ uint8 getsupplymode(void)
 {
     return PTGD_PTGD3;
 }
+
+//### Bluetooth module ###
+
+//--- Switch bluetooth module on / off
+/**
+ * Function to switch bluetooth module on
+ */
+void bt_on(void)
+{
+    PTBD_PTBD3 = 1;
+    return;
+}
+
+/**
+ * Function to switch bluetooth module off
+ */
+void bt_off(void)
+{
+    PTBD_PTBD3 = 0
+    return;
+}
+
+//--- Switch bluetooth module command mode on / off
+/**
+ * Function to switch command mode on
+ */
+void bt_cmdon(void)
+{
+    PTFD_PTFD7 = 1;
+    return;
+}
+
+/**
+ * Function to switch command mode off
+ */
+void bt_cmdoff(void)
+{
+    PTFD_PTFD7 = 0;
+    return;
+}
+
+//--- Set Baud rate ---
+void bt_scibaud(uint16 baud)
+{
+    SCI1BD = baud;
+    return;
+}
+
