@@ -15,3 +15,5 @@ cw_workspace
 */*.traceConfig
 
 datasheets/*.pdf
+
+*.swp
