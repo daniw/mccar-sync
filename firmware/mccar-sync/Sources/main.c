@@ -33,6 +33,7 @@ void main(void)
 {
     uint16 speedleft = 0;
     uint16 speedright = 0;
+    uint8 olddriveval;
     Direction_t d = STOP;
     uint16 line[8];
     enc_data_t data;
@@ -155,6 +156,16 @@ void main(void)
         {
         	PTFD_PTFD3 = 0;
         }
+        if ((driveval & 0x80) && !(olddriveval & 0x80))
+        {
+            PTCD_PTCD4 ^= 1;
+            PTCD_PTCD6 ^= 1;
+            PTED_PTED7 ^= 1;
+            PTFD_PTFD0 ^= 1;
+            PTFD_PTFD1 ^= 1;
+            PTFD_PTFD2 ^= 1;
+        }
+        olddriveval = driveval;
     }
 
     for(;;)
