@@ -37,7 +37,7 @@ typedef enum bt_class_
 
 typedef enum bt_inqmode_
 {
-    STANDART=0,
+    STANDARD=0,
     RSSI=1
 } bt_inqmode_t;
 
@@ -79,7 +79,7 @@ typedef struct bt_uartparam_
 {
     bt_baud_t baud;     // Baud rate
     bt_stopbit_t stop;  // stop bit
-    bt_parity_t;        // parity bit
+    bt_parity_t parity;  // parity bit
 } bt_uartparam_t;
 
 typedef enum bt_conmode_
@@ -181,7 +181,7 @@ bt_success_t bt_getname(char* name);
 bt_success_t bt_setname(char* name);
 
 // 7 query remote bluetooth device's name
- bt_getremotename(bt_addr_t addr);
+char bt_getremotename(bt_addr_t addr);
 
 // 8 query/set device role
 bt_role_t bt_getrole(void);

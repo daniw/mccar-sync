@@ -390,8 +390,13 @@ void bt_sendbyte(uint8 data)
 }
 
 //--- Send data ---
-void bt_senddata(uint8* data)
+void bt_senddata(uint8* data, uint8 size)
 {
-    while(bt_datacnt){}
-
+    while(bt_datacnt){}     // Wait until previous data has been sent
+    if (size > 0)
+    {
+        bt_datacnt = size - 1;
+        bt_dataptr = data;
+        SCI1D = *bt_dataptr;
+    }
 }
