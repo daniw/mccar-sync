@@ -21,8 +21,6 @@ typedef struct
 	Page pages[PAGE_POOL_SIZE];
 } PagePool;
 
-typedef void(*buffer_callback_writeBuf)(uint8* pBuffer, uint8 bufferSize);
-
 void pagePool_init(PagePool* pagePool);
 void* pagePool_malloc(PagePool* pagePool, uint8 size);
 void pagePool_free(PagePool* pagePool, void* pData);

@@ -16,6 +16,11 @@ void malloc_init(void)
 	pagePool_init(&pagePool);
 }
 
+PagePool* malloc_getPagePool(void)
+{
+	return &pagePool;
+}
+
 void* _malloc(uint8 size)
 {
 	return pagePool_malloc(&pagePool, size);
