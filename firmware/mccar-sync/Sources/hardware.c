@@ -7,16 +7,15 @@
 
 #include "platform.h"
 #include "hardware.h"
+#include "queue.h"
+#include "util.h"
 
 static uint8* bt_dataptr;
 static uint8 bt_datacnt;
 
-uint8 bt_readbuf[256];
-uint8 bt_readbufread = 0;
-uint8 bt_readbufwrite = 0;
-uint8 bt_sendbuf[256];
-uint8 bt_sendbufread = 0;
-uint8 bt_sendbufwrite = 0;
+Queue bt_sendQueue;
+Queue bt_receiveQueue;
+
 uint8 bt_send_busy;
 
 /**
@@ -409,45 +408,26 @@ void bt_senddata(uint8* data, uint8 size)
     }
 }
 
-//--- Enqueue data in queue to send via bluetooth ---
-uint8 bt_enqueue(uint8* data, uint8 size)
+bool bt_enqueue(uint8* data, uint8 size)
 {
 	int i;
-	uint8 spaceInBuffer = (bt_sendbufread - bt_sendbufwrite);
-	if (spaceInBuffer > size || spaceInBuffer == 0) //0=empty
-	{
-		for (i = 0; i < size; i++)
-		{
-			bt_sendbuf[bt_sendbufwrite++] = *(data++);
-			if (!bt_send_busy)
-			{
-//				SCI1D = bt_sendbuf[bt_sendbufread++];
-				bt_send_busy = TRUE;
-				SCI1C2_TCIE = 1;
-			}
-		}
-		for (i = size; i < 7; i++)
-		{
-			bt_sendbuf[bt_sendbufwrite++] = 0x00;	// Fill with zeros
-		}
-		bt_sendbuf[bt_sendbufwrite++] = 0x00;		// Calculate Chacksum
+	if (queue_getFreeSpace(&bt_sendQueue) < 8)
+		return FALSE;
+	
+	if (!queue_enqueue(&bt_sendQueue, data, size))
+		FATAL_ERROR();
 
-		return TRUE;
-	}
-	return FALSE;
-}
-
-//--- Degueue data received via bluetooth ---
-uint8 bt_dequeue(uint8* data, uint8 size)
-{
-	int i;
-	if ((uint8)(bt_readbufwrite - bt_readbufread) > size)
+	for (i = size; i < 7; i++)
 	{
-		for (i = 0; i < size; i++)
-		{
-			*(data++) = bt_readbuf[bt_readbufread++];
-		}
-		return TRUE;
+		if (!queue_enqueueByte(&bt_sendQueue, 0x00)) //padding (zeroes)
+			FATAL_ERROR();
 	}
-	return FALSE;
+	if (!queue_enqueueByte(&bt_sendQueue, 0x00)) //checksum
+		FATAL_ERROR();
+	
+	if (!bt_send_busy)
+	{
+		bt_send_busy = TRUE;
+		SCI1C2_TCIE = 1;
+	}
 }
