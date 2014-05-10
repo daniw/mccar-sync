@@ -20,6 +20,7 @@
 #include "hardware.h"   /* include lowlevel hardware declarations */
 #include "i2c.h"        /* include i2c module drivers */
 #include "encoder.h"    /* include encoder driver */
+#include "malloc.h"
 
 #define STEERING 0x2000
 
@@ -52,6 +53,7 @@ void main(void)
     setup.byte = 0x00;
     setup.flags.carrieren = 1;
 
+    malloc_init();
     hardware_lowlevel_init();
     EnableInterrupts;               // Interrupts aktivieren
 
@@ -192,7 +194,25 @@ void main(void)
             PTFD_PTFD2 ^= 1;
         }
         olddriveval = driveval;
+        {
+        	uint8 *arr1, *arr2;
+        	int i;
+            arr1 = _malloc(sizeof(uint8) * 100);
+            arr2 = _malloc(sizeof(uint8) * 100);
+            _free(arr1);
+            _free(arr2);
+            
+            for (i = 0; i < 100; ++i)
+            {
+            	arr1[i] = 0xff;
+            }
+            for (i = 0; i < 100; ++i)
+            {
+            	arr2[i] = 0xff;
+            }
+        }
     }
+    
 
     for(;;)
     {
