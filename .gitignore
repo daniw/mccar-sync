@@ -13,7 +13,6 @@ cw_workspace
 */*/Generated_Code
 */*.apconfig
 */*.traceConfig
-*/*/*/Debugger
 
 datasheets/*.pdf
 
