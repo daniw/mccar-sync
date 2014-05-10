@@ -21,7 +21,7 @@ uint8 expv(uint16* x, uint8 size)
 		z += i * x[i];
 		n += x[i];
 	}
-	z = z << STATSHFIT;
+	z = z << STATSHIFT;
 	z = z / n;
 	return (uint8) z;
 }
@@ -30,24 +30,24 @@ uint8 expv(uint16* x, uint8 size)
 // This function is created for 12 Bit values as x
 // and a size of 8.
 // For other values the boundaries need to be rechecked
-uint16 var(uint16* x, uint8 size)
+uint16 var1(uint16* x, uint8 size)
 {
-	uint8 expv = expv(x, size);
-	return var(x, size, expv);
+	uint8 expvResult = expv(x, size);
+	return var2(x, size, expvResult);
 }
 
 //-- --
 // This function is created for 12 Bit values as x
 // and a size of 8.
 // For other values the boundaries need to be rechecked
-uint16 var(uint16* x, uint8 size, uint8 expv)
+uint16 var2(uint16* x, uint8 size, uint8 expv)
 {
 	uint8 i;
 	uint32 z;
 	uint16 n;
 	for (i = 0; i < size; i++)
 	{
-		z += ((i << STATSHIFT) - exp)*(i - expv)*(x[i]);
+		z += ((i << STATSHIFT) - expv)*(i - expv)*(x[i]);
 		n += x[i];
 	}
 	z = z / n;
