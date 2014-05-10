@@ -27,7 +27,6 @@
 
 uint8 driveval = 0;
 int16 trimsteering = 0;
-uint8 tempbuf[8];
 
 extern uint8 bt_readbuf[];
 extern uint8 bt_readbufread;
@@ -35,6 +34,30 @@ extern uint8 bt_readbufwrite;
 extern uint8 bt_sendbuf[];
 extern uint8 bt_sendbufread;
 extern uint8 bt_sendbufwrite;
+
+void handleSciReceive(SwappableMemoryPool* pSwappableMemoryPool)
+{
+	uint8 i;
+	uint8 temp[8];
+	if ((uint8)(bt_readbufwrite - bt_readbufread) > 7)
+	{
+		for (i = 0; i < 8; i++)
+		{
+			temp[i] = bt_readbuf[bt_readbufread++];
+		}
+		switch (temp[0])
+		{
+		case 0x01:
+			driveval = temp[1];
+			break;
+		case 0x0A:
+			swappableMemoryPool_handleResponse(pSwappableMemoryPool, temp);
+			break;
+		default:
+			break;
+		}
+	}
+}
 
 /**
  * main program
@@ -90,11 +113,17 @@ void main(void)
     swappableMemoryPool_requestSwapIn(&swappableMemoryPool, bufferNo, testData, sizeof(testData));
     while (swappableMemoryPool_isSwapInPending(&swappableMemoryPool, bufferNo))
     {
+    	handleSciReceive(&swappableMemoryPool);
     	/*waiting*/
     }
 
+    _malloc(255);
+    _malloc(128);
+
     while (1)
     {
+    	handleSciReceive(&swappableMemoryPool);
+
     	// read encoder
         status = readencoder(&data);
 
@@ -118,19 +147,6 @@ void main(void)
         if(myirtimer > 30)
         {
             myirtimer = 0;
-        }
-
-        // get data from bt module
-        if ((uint8)(bt_readbufwrite - bt_readbufread) >= 8)
-        {
-        	for (i = 0; i < 8; i++)
-        	{
-        		tempbuf[i] = bt_readbuf[bt_readbufread++];
-        	}
-        }
-        if (tempbuf[0] == 0x01)
-        {
-        	driveval = tempbuf[1];
         }
 
         // control motors

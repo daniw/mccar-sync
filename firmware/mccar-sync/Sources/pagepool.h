@@ -11,7 +11,7 @@
 #include <platform.h>
 
 #define PAGE_POOL_SIZE 20 //20 pages
-#define PAGE_SIZE 1 * 31 //64 bytes
+#define PAGE_SIZE 1 * 32 //32 bytes
 
 typedef char Page[PAGE_SIZE];
 
