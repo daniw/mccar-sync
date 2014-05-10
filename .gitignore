@@ -17,6 +17,10 @@ cw_workspace
 
 datasheets/*.pdf
 
+*.pro.user
+*.pro.user.*
+*~
+
 *.swp
 
 doc/*.aux
