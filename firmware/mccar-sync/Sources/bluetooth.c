@@ -9,6 +9,12 @@
 
 static uint8 busy = 0;
 static uint8 bt_str[64];
+uint8 bt_readbuf[256];
+uint8 bt_readbufread = 0;
+uint8 bt_readbufwrite = 0;
+uint8 bt_sendbuf[256];
+uint8 bt_sendbufread = 0;
+uint8 bt_sendbufwrite = 0;
 
 // 0 init command mode
 void bt_joincmdmode(void)

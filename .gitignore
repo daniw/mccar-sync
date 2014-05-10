@@ -17,3 +17,9 @@ cw_workspace
 datasheets/*.pdf
 
 *.swp
+
+doc/*.aux
+doc/*.log
+doc/*.pdf
+doc/*.toc
+

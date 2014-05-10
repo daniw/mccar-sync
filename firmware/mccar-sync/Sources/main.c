@@ -25,6 +25,14 @@
 
 uint8 driveval = 0;
 int16 trimsteering = 0;
+uint8 tempbuf[8];
+
+extern uint8 bt_readbuf[];
+extern uint8 bt_readbufread;
+extern uint8 bt_readbufwrite;
+extern uint8 bt_sendbuf[];
+extern uint8 bt_sendbufread;
+extern uint8 bt_sendbufwrite;
 
 /**
  * main program
@@ -39,6 +47,7 @@ void main(void)
     enc_data_t data;
     Com_Status_t status;
     unsigned char myirtimer = 0;
+    uint8 i;
     enc_setup_t setup;
     setup.byte = 0x00;
     setup.flags.carrieren = 1;
@@ -55,7 +64,10 @@ void main(void)
 
     while (1)
     {
+    	// read encoder
         status = readencoder(&data);
+
+        // read ir sensor
         if(myirtimer++ < 3)
         {
             PTED |= IR_FM;
@@ -77,6 +89,20 @@ void main(void)
             myirtimer = 0;
         }
 
+        // get data from bt module
+        if ((uint8)(bt_readbufwrite - bt_readbufread) >= 8)
+        {
+        	for (i = 0; i < 8; i++)
+        	{
+        		tempbuf[i] = bt_readbuf[bt_readbufread++];
+        	}
+        }
+        if (tempbuf[0] == 0x01)
+        {
+        	driveval = tempbuf[1];
+        }
+
+        // control motors
         speedleft = 0xffff;
         speedright = 0xffff;
         if (trimsteering > 0)

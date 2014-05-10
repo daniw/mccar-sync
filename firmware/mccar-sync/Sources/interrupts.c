@@ -10,6 +10,13 @@ extern uint8* bt_dataptr;
 extern uint8 bt_datacnt;
 extern uint8 driveval;
 
+extern uint8 bt_readbuf[];
+extern uint8 bt_readbufread;
+extern uint8 bt_readbufwrite;
+extern uint8 bt_sendbuf[];
+extern uint8 bt_sendbufread;
+extern uint8 bt_sendbufwrite;
+
 interrupt void isr_RTC(void)        // RTC
 {
     return;
@@ -68,7 +75,7 @@ interrupt void isr_SCI1R(void)      // SCI1 receive
 
 		temp = SCI1D;
 		SCI1D = temp;
-		driveval = temp;
+		bt_readbuf[bt_readbufwrite++] = temp;
 	}
 	else
 	{
