@@ -1,8 +1,9 @@
 \documentclass[a4paper]{article}
 
-
+\usepackage{pdflscape}     % Landscape
 
 \begin{document}
+\begin{landscape}
 \begin{tabular}{lllllllll}
 Command &
     Byte 0 &
@@ -16,11 +17,193 @@ Command &
 Move &
     0x01 &
     Direction &
-    none &
-    none &
-    none &
-    none &
-    none &
+    - &
+    - &
+    - &
+    - &
+    - &
     crc8 \\
+FollowLine &
+    0x02 &
+    Type &
+    speed &
+    - &
+    - &
+    - &
+    - &
+    crc8 \\
+ConfigPID &
+    0x03 &
+    kpleft &
+    kileft &
+    kdleft &
+    kpright &
+    kiright &
+    kdright &
+    crc8 \\
+LEDColor &
+    0x04 &
+    redleft &
+    greenleft &
+    blueleft &
+    redright &
+    greenright &
+    blueright &
+    crc8 \\
+Colorsensor &
+    0x05 &
+    red &
+    green &
+    blue &
+    - &
+    - &
+    - &
+    crc8 \\
+Acceleration &
+    0x06 &
+    xhigh &
+    xlow &
+    yhigh &
+    ylow &
+    zhigh &
+    zlow &
+    crc8 \\
+Beep &
+    0x07 &
+    Bufferno &
+    - &
+    - &
+    - &
+    - &
+    - &
+    crc8 \\
+RequestData &
+    0x08 &
+    Bufferno &
+    - &
+    - &
+    - &
+    - &
+    - &
+    crc8 \\
+WriteData &
+    0x09 &
+    Bufferno &
+    Offset &
+    Data &
+    Data &
+    Data &
+    Data &
+    crc8 \\
+HandleRequestedData &
+    0x0A &
+    Bufferno &
+    Data &
+    Data &
+    Data &
+    Data &
+    Data &
+    crc8 \\
+Status &
+    0x0B &
+    voltagehigh &
+    voltagelow &
+    currenthigh &
+    currentlow &
+    status &
+    Buffer &
+    crc8 \\
+Display &
+    0x0C &
+    Bufferno &
+    Data &
+    Data &
+    Data &
+    Data &
+    Data &
+    crc8 \\
+ &
+    0x &
+     &
+     &
+     &
+     &
+     &
+     &
+    crc8 \\
+ &
+    0x &
+     &
+     &
+     &
+     &
+     &
+     &
+    crc8 \\
+ &
+    0x &
+     &
+     &
+     &
+     &
+     &
+     &
+    crc8 \\
+ &
+    0x &
+     &
+     &
+     &
+     &
+     &
+     &
+    crc8 \\
+ &
+    0x &
+     &
+     &
+     &
+     &
+     &
+     &
+    crc8 \\
+ &
+    0x &
+     &
+     &
+     &
+     &
+     &
+     &
+    crc8 \\
+ &
+    0x &
+     &
+     &
+     &
+     &
+     &
+     &
+    crc8 \\
+ &
+    0x &
+     &
+     &
+     &
+     &
+     &
+     &
+    crc8 \\
+ &
+    0x &
+     &
+     &
+     &
+     &
+     &
+     &
+    crc8 \\
+
 \end{tabular}
+\end{landscape}
 \end{document}

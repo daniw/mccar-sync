@@ -11,6 +11,13 @@
 static uint8* bt_dataptr;
 static uint8 bt_datacnt;
 
+uint8 bt_readbuf[256];
+uint8 bt_readbufread = 0;
+uint8 bt_readbufwrite = 0;
+uint8 bt_sendbuf[256];
+uint8 bt_sendbufread = 0;
+uint8 bt_sendbufwrite = 0;
+
 /**
  * Initialise clock module, ports and timer
  * @author daniw
@@ -399,4 +406,34 @@ void bt_senddata(uint8* data, uint8 size)
         bt_dataptr = data;
         SCI1D = *bt_dataptr;
     }
+}
+
+//--- Enque data in queue to send via bluetooth ---
+uint8 bt_enque(uint8* data, uint8 size)
+{
+	int i;
+	if ((uint8)(bt_sendbufread - bt_sendbufwrite) > size)
+	{
+		for (i = 0; i < size; i++)
+		{
+			bt_sendbuf[bt_sendbufwrite++] = *(data++);
+		}
+		return 1;
+	}
+	return 0;
+}
+
+//--- Engue data received via bluetooth ---
+uint8 bt_deque(uint8* data, uint8 size)
+{
+	int i;
+	if ((uint8)(bt_readbufwrite - bt_readbufread) > size)
+	{
+		for (i = 0; i < size; i++)
+		{
+			*(data++) = bt_readbuf[bt_readbufread++];
+		}
+		return 1;
+	}
+	return 0;
 }
