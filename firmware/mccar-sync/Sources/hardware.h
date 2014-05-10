@@ -373,5 +373,7 @@ void bt_cmdoff(void);
 void bt_scibaud(uint16 baud);
 void bt_sendbyte(uint8 data);
 void bt_senddata(uint8* data, uint8 size);
+uint8 bt_enque(uint8* data, uint8 size);
+uint8 bt_deque(uint8* data, uint8 size);
 
 #endif /* HARDWARE_H_ */
