@@ -37,19 +37,19 @@ uint8 swappableMemory_swapOut(SwappableMemoryPool* pPool, void* pData, uint8 siz
 	return pageNo;
 }
 
-void swappableMemory_swapIn(SwappableMemoryPool* pPool, uint8 pageNo, void* pData, uint8 size)
+void swappableMemory_requestSwapIn(SwappableMemoryPool* pPool, uint8 bufferNo, void* pData, uint8 size)
 {
 	SwappableMemorySwapIn* pNewSwapInInfo;
 	SwappableMemorySwapIn* pCurr;
 	uint8 data[8] = { 0 };
 	data[0] = 0x08;
-	data[1] = pageNo;
+	data[1] = bufferNo;
 
 	pPool->fnWriteBuf(data, 3);
 	
 	pNewSwapInInfo = pagePool_malloc(pPool->pPagePool, sizeof(SwappableMemorySwapIn));
 	
-	pNewSwapInInfo->bufferNo = pageNo;
+	pNewSwapInInfo->bufferNo = bufferNo;
 	pNewSwapInInfo->next = NULL;
 	pNewSwapInInfo->target = pData;
 	pNewSwapInInfo->targetSize = size;
@@ -71,6 +71,20 @@ void swappableMemory_swapIn(SwappableMemoryPool* pPool, uint8 pageNo, void* pDat
 	}
 }
 
+bool swappableMemory_isSwapInPending(SwappableMemoryPool* pPool, uint8 bufferNo)
+{
+	SwappableMemorySwapIn* pCurr = pPool->pAwaitingSwapIns;
+	while (pCurr)
+	{
+		if (pCurr->bufferNo == bufferNo)
+		{
+			return TRUE;
+		}
+		pCurr = pCurr->next;
+	}
+	return FALSE;
+}
+
 void swappableMemory_handleResponse(SwappableMemoryPool* pPool, void* pData)
 {
 	uint8 i;
@@ -81,7 +95,7 @@ void swappableMemory_handleResponse(SwappableMemoryPool* pPool, void* pData)
 	uint8 bufferNo = pCharData[1];
 
 	pCurr = pPool->pAwaitingSwapIns;
-	if (pCurr)
+	while (pCurr)
 	{
 		if (pCurr->bufferNo == bufferNo)
 		{

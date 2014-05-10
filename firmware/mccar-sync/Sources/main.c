@@ -21,6 +21,7 @@
 #include "i2c.h"        /* include i2c module drivers */
 #include "encoder.h"    /* include encoder driver */
 #include "malloc.h"
+#include "swappableMemory.h"
 
 #define STEERING 0x2000
 

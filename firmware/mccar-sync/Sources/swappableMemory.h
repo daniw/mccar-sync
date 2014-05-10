@@ -36,6 +36,10 @@ typedef struct SwappableMemoryPoolSTRUCT
 
 typedef struct PagePoolSTRUCT PagePool;
 
+uint8 swappableMemory_swapOut(SwappableMemoryPool* pPool, void* pData, uint8 size); //! @returns bufferNo
+void swappableMemory_requestSwapIn(SwappableMemoryPool* pPool, uint8 bufferNo, void* pData, uint8 size);
+bool swappableMemory_isSwapInPending(SwappableMemoryPool* pPool, uint8 bufferNo);
+void swappableMemory_handleResponse(SwappableMemoryPool* pPool, void* pData);
 
 
 #endif /* SWAPPABLEMEMORY_H_ */
