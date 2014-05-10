@@ -21,8 +21,8 @@ uint16 pid(uint16 currentspeed, uint16 targetspeed, uint8 motor)
     static uint32 w;
 
     e[motor] = targetspeed - currentspeed;
-    p[motor] = kp[motor] * (e[motor]);
-    i[motor] = ki[motor] * (i[motor] + e[motor]);
+    p[motor] = kp[motor] * e[motor];
+    i[motor] = i[motor] + ki[motor] * e[motor];
     d[motor] = kd[motor] * (e[motor] - olde[motor]);
 
     w = p[motor] + i[motor] + d[motor];
