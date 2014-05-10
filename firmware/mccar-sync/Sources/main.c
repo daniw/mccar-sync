@@ -70,15 +70,29 @@ void main(void)
 
     swappableMemoryPool_init(&swappableMemoryPool, malloc_getPagePool(), &bt_enqueue);
 
-    testData[0] = 100;
+    {
+    	int i;
+    	for (i = 0; i < 10; ++i)
+    	{
+    	    testData[i] = i + 20;
+    	}
+    }
+
     bufferNo = swappableMemoryPool_swapOut(&swappableMemoryPool, testData, sizeof(testData));
-    testData[0] = 0;
+
+    {
+    	int i;
+    	for (i = 0; i < 10; ++i)
+    	{
+    	    testData[i] = 0;
+    	}
+    }
     swappableMemoryPool_requestSwapIn(&swappableMemoryPool, bufferNo, testData, sizeof(testData));
     while (swappableMemoryPool_isSwapInPending(&swappableMemoryPool, bufferNo))
     {
     	/*waiting*/
     }
-    
+
     while (1)
     {
     	// read encoder
@@ -216,7 +230,7 @@ void main(void)
             arr2 = _malloc(sizeof(uint8) * 100);
             _free(arr1);
             _free(arr2);
-            
+
             for (i = 0; i < 100; ++i)
             {
             	arr1[i] = 0xff;
@@ -227,7 +241,7 @@ void main(void)
             }
         }
     }
-    
+
 
     for(;;)
     {

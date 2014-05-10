@@ -17,6 +17,7 @@ uint8 bt_readbufwrite = 0;
 uint8 bt_sendbuf[256];
 uint8 bt_sendbufread = 0;
 uint8 bt_sendbufwrite = 0;
+uint8 bt_send_busy;
 
 /**
  * Initialise clock module, ports and timer
@@ -408,7 +409,7 @@ void bt_senddata(uint8* data, uint8 size)
     }
 }
 
-//--- Enque data in queue to send via bluetooth ---
+//--- Enqueue data in queue to send via bluetooth ---
 uint8 bt_enqueue(uint8* data, uint8 size)
 {
 	int i;
@@ -418,13 +419,25 @@ uint8 bt_enqueue(uint8* data, uint8 size)
 		for (i = 0; i < size; i++)
 		{
 			bt_sendbuf[bt_sendbufwrite++] = *(data++);
+			if (!bt_send_busy)
+			{
+//				SCI1D = bt_sendbuf[bt_sendbufread++];
+				bt_send_busy = TRUE;
+				SCI1C2_TCIE = 1;
+			}
 		}
+		for (i = size; i < 7; i++)
+		{
+			bt_sendbuf[bt_sendbufwrite++] = 0x00;	// Fill with zeros
+		}
+		bt_sendbuf[bt_sendbufwrite++] = 0x00;		// Calculate Chacksum
+
 		return TRUE;
 	}
 	return FALSE;
 }
 
-//--- Engue data received via bluetooth ---
+//--- Degueue data received via bluetooth ---
 uint8 bt_dequeue(uint8* data, uint8 size)
 {
 	int i;

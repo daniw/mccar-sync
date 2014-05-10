@@ -16,6 +16,7 @@ extern uint8 bt_readbufwrite;
 extern uint8 bt_sendbuf[];
 extern uint8 bt_sendbufread;
 extern uint8 bt_sendbufwrite;
+extern uint8 bt_send_busy;
 
 interrupt void isr_RTC(void)        // RTC
 {
@@ -59,11 +60,19 @@ interrupt void isr_SCI2E(void)      // SCI2 error
 
 interrupt void isr_SCI1T(void)      // SCI1 transmit
 {
-    if (bt_datacnt)
-    {
-        bt_dataptr++;
-        SCI1D = *bt_dataptr;
-    }
+	if (SCI1S1_TC)
+	{
+		uint16 i;
+		if ((uint8)(bt_sendbufwrite - bt_sendbufread) > 0)
+		{
+			SCI1D = bt_sendbuf[bt_sendbufread++];
+		}
+		else
+		{
+			bt_send_busy = FALSE;
+			SCI1C2_TCIE = 0;
+		}
+	}
     return;
 }
 
@@ -74,7 +83,7 @@ interrupt void isr_SCI1R(void)      // SCI1 receive
 	{
 
 		temp = SCI1D;
-		SCI1D = temp;
+		//SCI1D = temp;  	// Echo
 		bt_readbuf[bt_readbufwrite++] = temp;
 	}
 	else
