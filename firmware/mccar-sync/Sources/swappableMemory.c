@@ -8,7 +8,15 @@
 
 #include "swappableMemory.h"
 
-uint8 swappableMemory_swapOut(SwappableMemoryPool* pPool, void* pData, uint8 size)
+void swappableMemoryPool_init(SwappableMemoryPool* pPool, PagePool* pPagePool, callback_writeBuf fnWriteBuf)
+{
+	pPool->fnWriteBuf = fnWriteBuf;
+	pPool->lastPageNo = 0;
+	pPool->pAwaitingSwapIns = NULL;
+	pPool->pPagePool = pPagePool;
+}
+
+uint8 swappableMemoryPool_swapOut(SwappableMemoryPool* pPool, void* pData, uint8 size)
 {
 	uint8 pageNo = ++pPool->lastPageNo;
 	char* pCharData = pData;
@@ -37,7 +45,7 @@ uint8 swappableMemory_swapOut(SwappableMemoryPool* pPool, void* pData, uint8 siz
 	return pageNo;
 }
 
-void swappableMemory_requestSwapIn(SwappableMemoryPool* pPool, uint8 bufferNo, void* pData, uint8 size)
+void swappableMemoryPool_requestSwapIn(SwappableMemoryPool* pPool, uint8 bufferNo, void* pData, uint8 size)
 {
 	SwappableMemorySwapIn* pNewSwapInInfo;
 	SwappableMemorySwapIn* pCurr;
@@ -71,7 +79,7 @@ void swappableMemory_requestSwapIn(SwappableMemoryPool* pPool, uint8 bufferNo, v
 	}
 }
 
-bool swappableMemory_isSwapInPending(SwappableMemoryPool* pPool, uint8 bufferNo)
+bool swappableMemoryPool_isSwapInPending(SwappableMemoryPool* pPool, uint8 bufferNo)
 {
 	SwappableMemorySwapIn* pCurr = pPool->pAwaitingSwapIns;
 	while (pCurr)
@@ -85,7 +93,7 @@ bool swappableMemory_isSwapInPending(SwappableMemoryPool* pPool, uint8 bufferNo)
 	return FALSE;
 }
 
-void swappableMemory_handleResponse(SwappableMemoryPool* pPool, void* pData)
+void swappableMemoryPool_handleResponse(SwappableMemoryPool* pPool, void* pData)
 {
 	uint8 i;
 	bool finishedReading = FALSE;

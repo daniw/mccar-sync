@@ -51,6 +51,9 @@ void main(void)
     unsigned char myirtimer = 0;
     uint8 i;
     enc_setup_t setup;
+    SwappableMemoryPool swappableMemoryPool;
+    uint8 testData[10];
+    uint8 bufferNo;
     setup.byte = 0x00;
     setup.flags.carrieren = 1;
 
@@ -65,6 +68,17 @@ void main(void)
     status = setupencoder(setup);
     PTED |= IR_FM;                  // switch front IR LED on to detect obstacles in front of MCCar
 
+    swappableMemoryPool_init(&swappableMemoryPool, malloc_getPagePool(), &bt_enqueue);
+
+    testData[0] = 100;
+    bufferNo = swappableMemoryPool_swapOut(&swappableMemoryPool, testData, sizeof(testData));
+    testData[0] = 0;
+    swappableMemoryPool_requestSwapIn(&swappableMemoryPool, bufferNo, testData, sizeof(testData));
+    while (swappableMemoryPool_isSwapInPending(&swappableMemoryPool, bufferNo))
+    {
+    	/*waiting*/
+    }
+    
     while (1)
     {
     	// read encoder

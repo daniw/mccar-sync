@@ -5,13 +5,13 @@
  *      Author: Adrian
  */
 
-#ifndef SWAPPABLEMEMORY_H_
-#define SWAPPABLEMEMORY_H_
+#ifndef swappableMemoryPool_H_
+#define swappableMemoryPool_H_
 
 #include "platform.h"
 #include "pagePool.h"
 
-typedef void(*callback_writeBuf)(uint8* pBuffer, uint8 bufferSize);
+typedef uint8(*callback_writeBuf)(uint8* pBuffer, uint8 bufferSize);
 
 typedef struct SwappableMemorySwapInSTRUCT
 {
@@ -36,10 +36,11 @@ typedef struct SwappableMemoryPoolSTRUCT
 
 typedef struct PagePoolSTRUCT PagePool;
 
-uint8 swappableMemory_swapOut(SwappableMemoryPool* pPool, void* pData, uint8 size); //! @returns bufferNo
-void swappableMemory_requestSwapIn(SwappableMemoryPool* pPool, uint8 bufferNo, void* pData, uint8 size);
-bool swappableMemory_isSwapInPending(SwappableMemoryPool* pPool, uint8 bufferNo);
-void swappableMemory_handleResponse(SwappableMemoryPool* pPool, void* pData);
+void swappableMemoryPool_init(SwappableMemoryPool* pPool, PagePool* pPagePool, callback_writeBuf fnWriteBuf);
+uint8 swappableMemoryPool_swapOut(SwappableMemoryPool* pPool, void* pData, uint8 size); //! @returns bufferNo
+void swappableMemoryPool_requestSwapIn(SwappableMemoryPool* pPool, uint8 bufferNo, void* pData, uint8 size);
+bool swappableMemoryPool_isSwapInPending(SwappableMemoryPool* pPool, uint8 bufferNo);
+void swappableMemoryPool_handleResponse(SwappableMemoryPool* pPool, void* pData);
 
 
-#endif /* SWAPPABLEMEMORY_H_ */
+#endif /* swappableMemoryPool_H_ */

@@ -409,10 +409,11 @@ void bt_senddata(uint8* data, uint8 size)
 }
 
 //--- Enque data in queue to send via bluetooth ---
-uint8 bt_enque(uint8* data, uint8 size)
+uint8 bt_enqueue(uint8* data, uint8 size)
 {
 	int i;
-	if ((uint8)(bt_sendbufread - bt_sendbufwrite) > size)
+	uint8 spaceInBuffer = (bt_sendbufread - bt_sendbufwrite);
+	if (spaceInBuffer > size || spaceInBuffer == 0) //0=empty
 	{
 		for (i = 0; i < size; i++)
 		{
@@ -424,7 +425,7 @@ uint8 bt_enque(uint8* data, uint8 size)
 }
 
 //--- Engue data received via bluetooth ---
-uint8 bt_deque(uint8* data, uint8 size)
+uint8 bt_dequeue(uint8* data, uint8 size)
 {
 	int i;
 	if ((uint8)(bt_readbufwrite - bt_readbufread) > size)
