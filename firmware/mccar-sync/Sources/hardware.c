@@ -418,9 +418,9 @@ uint8 bt_enque(uint8* data, uint8 size)
 		{
 			bt_sendbuf[bt_sendbufwrite++] = *(data++);
 		}
-		return 1;
+		return TRUE;
 	}
-	return 0;
+	return FALSE;
 }
 
 //--- Engue data received via bluetooth ---
@@ -433,7 +433,7 @@ uint8 bt_deque(uint8* data, uint8 size)
 		{
 			*(data++) = bt_readbuf[bt_readbufread++];
 		}
-		return 1;
+		return TRUE;
 	}
-	return 0;
+	return FALSE;
 }
