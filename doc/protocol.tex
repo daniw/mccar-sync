@@ -4,9 +4,7 @@
 
 \begin{document}
 \begin{landscape}
-
-TODO: all cmds have now 12 bytes
-
+\begin{footnotesize}
 \begin{tabular}{lllllllllllll}
 Command &
     Byte 0 &
@@ -29,11 +27,19 @@ Move &
     - &
     - &
     - &
+    - &
+    - &
+    - &
+    - &
     crc8 \\
 FollowLine &
     0x02 &
     Type &
     speed &
+    - &
+    - &
+    - &
+    - &
     - &
     - &
     - &
@@ -47,6 +53,10 @@ ConfigPID &
     kpright &
     kiright &
     kdright &
+    - &
+    - &
+    - &
+    - &
     crc8 \\
 LEDColor &
     0x04 &
@@ -56,12 +66,20 @@ LEDColor &
     redright &
     greenright &
     blueright &
+    - &
+    - &
+    - &
+    - &
     crc8 \\
 Colorsensor &
     0x05 &
     red &
     green &
     blue &
+    - &
+    - &
+    - &
+    - &
     - &
     - &
     - &
@@ -74,6 +92,10 @@ Acceleration &
     ylow &
     zhigh &
     zlow &
+    - &
+    - &
+    - &
+    - &
     crc8 \\
 Beep &
     0x07 &
@@ -84,11 +106,17 @@ Beep &
     - &
     - &
     - &
+    - &
+    - &
+    - &
     crc8 \\
 RequestData &
     0x08 &
     Bufferno high &
     Bufferno low &
+    - &
+    - &
+    - &
     - &
     - &
     - &
@@ -105,6 +133,8 @@ WriteData &
     Data &
     Data &
     Data &
+    - &
+    - &
     crc8 \\
 HandleRequestedData &
     0x0A &
@@ -115,6 +145,9 @@ HandleRequestedData &
     Data &
     Data &
     Data &
+    - &
+    - &
+    - &
     crc8 \\
 Status &
     0x0B &
@@ -124,6 +157,10 @@ Status &
     currentlow &
     status &
     Buffer &
+    - &
+    - &
+    - &
+    - &
     crc8 \\
 Display &
     0x0C &
@@ -133,6 +170,10 @@ Display &
     Data &
     Data &
     Data &
+    - &
+    - &
+    - &
+    - &
     crc8 \\
  &
     0x &
@@ -140,20 +181,6 @@ Display &
      &
      &
      &
-     &
-     &
-    crc8 \\
- &
-    0x &
-     &
-     &
-     &
-     &
-     &
-     &
-    crc8 \\
- &
-    0x &
      &
      &
      &
@@ -169,11 +196,6 @@ Display &
      &
      &
      &
-    crc8 \\
- &
-    0x &
-     &
-     &
      &
      &
      &
@@ -185,11 +207,6 @@ Display &
      &
      &
      &
-     &
-     &
-    crc8 \\
- &
-    0x &
      &
      &
      &
@@ -205,9 +222,69 @@ Display &
      &
      &
      &
+     &
+     &
+     &
+     &
     crc8 \\
  &
     0x &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+    crc8 \\
+ &
+    0x &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+    crc8 \\
+ &
+    0x &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+    crc8 \\
+ &
+    0x &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+    crc8 \\
+ &
+    0x &
+     &
+     &
+     &
+     &
      &
      &
      &
@@ -217,5 +294,6 @@ Display &
     crc8 \\
 
 \end{tabular}
+\end{footnotesize}
 \end{landscape}
 \end{document}
