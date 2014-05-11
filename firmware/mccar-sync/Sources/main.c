@@ -279,12 +279,12 @@ void taskControlMotors(void* unused)
     }
     if ((driveval & 0x80) && !(olddriveval & 0x80))
     {
-        PTCD_PTCD4 ^= 1;
-        PTCD_PTCD6 ^= 1;
-        PTED_PTED7 ^= 1;
-        PTFD_PTFD0 ^= 1;
-        PTFD_PTFD1 ^= 1;
-        PTFD_PTFD2 ^= 1;
+        ledleftred    ^= 0xff;
+        ledleftgreen  ^= 0xff;
+        ledleftblue   ^= 0xff;
+        ledrightred   ^= 0xff;
+        ledrightgreen ^= 0xff;
+        ledrightblue  ^= 0xff;
     }
     olddriveval = driveval;
 

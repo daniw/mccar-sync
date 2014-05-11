@@ -103,7 +103,42 @@ interrupt void isr_SCI1E(void)      // SCI1 error
 
 interrupt void isr_TPM2O(void)      // TPM2 overflow
 {
-return;
+    static uint8 cnt = 0;
+    if (cnt == 0)
+    {
+        PTFD_PTFD1 = 0;     // left red on
+        PTCD_PTCD4 = 0;     // left green on
+        PTFD_PTFD0 = 0;     // left blue on
+        PTFD_PTFD4 = 0;     // right red on
+        PTCD_PTCD6 = 0;     // right green on
+        PTED_PTED7 = 0;     // right blue on
+    }
+    if (ledleftred <= cnt)
+    {
+        PTFD_PTFD1 = 1;     // left red off
+    }
+    if (ledleftgreen <= cnt)
+    {
+        PTCD_PTCD4 = 1;     // left green off
+    }
+    if (ledleftblue <= cnt)
+    {
+        PTFD_PTFD0 = 1;     // left blue off
+    }
+    if (ledrightred <= cnt)
+    {
+        PTFD_PTFD4 = 1;     // right red off
+    }
+    if (ledrightgreen <= cnt)
+    {
+        PTCD_PTCD6 = 1;     // right green off
+    }
+    if (ledrightblue <= cnt)
+    {
+        PTED_PTED7 = 1;     // right blue off
+    }
+    cnt++;
+    return;
 }
 
 interrupt void isr_TPM2CH1(void)    // TPM2 channel 1
