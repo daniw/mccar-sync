@@ -36,6 +36,17 @@ extern Queue bt_sendQueue;
 extern Queue bt_receiveQueue;
 extern uint8 bt_send_busy;
 
+extern uint8 kp[];
+extern uint8 ki[];
+extern uint8 kd[];
+
+extern uint8 ledleftred;
+extern uint8 ledleftgreen;
+extern uint8 ledleftblue;
+extern uint8 ledrightred;
+extern uint8 ledrightgreen;
+extern uint8 ledrightblue;
+
 Scheduler scheduler;
 
 typedef struct
@@ -49,7 +60,7 @@ void handleMemoryPoolResponse(void* data)
 	MemoryPoolResponseData* pData = data;
 
 	swappableMemoryPool_handleResponse(pData->pSwappableMemoryPool, pData->command);
-	
+
 	_free(pData);
 }
 
@@ -60,14 +71,62 @@ void handleSciReceive(SwappableMemoryPool* pSwappableMemoryPool)
 	{
 		if (!queue_dequeue(&bt_receiveQueue, command, sizeof(command)))
 			FATAL_ERROR();
-		
+
 		switch (command[0])
 		{
+        // Null command
+        case 0x00:
+            // No valid command
+            break;
+        // Move
 		case 0x01:
 			{
 				driveval = command[1];
 			}
 			break;
+        // FollowLine
+        case 0x02:
+            // not implemented yet
+            break;
+        // ConfigPID
+        case 0x03:
+            kp[0] = command[1];
+            ki[0] = command[2];
+            kd[0] = command[3];
+            kp[1] = command[4];
+            ki[1] = command[5];
+            kd[1] = command[6];
+            break;
+        // LEDColor
+        case 0x04:
+            ledleftred    = command[1];
+            ledleftgreen  = command[2];
+            ledleftblue   = command[3];
+            ledrightred   = command[4];
+            ledrightgreen = command[5];
+            ledrightblue  = command[6];
+            break;
+        // Colorsensor
+        case 0x05:
+            // not implemented yet
+            break;
+        // Acceleration
+        case 0x06:
+            // not implemented yet
+            break;
+        // Beep
+        case 0x07:
+            // not implemented yet
+            break;
+        // RequestData
+        case 0x08:
+            // not implemented yet
+            break;
+        // WriteData
+        case 0x09:
+            // not implemented yet
+            break;
+        // HandleRequestedData
 		case 0x0A:
 			{
 				MemoryPoolResponseData* pData = _malloc(sizeof(MemoryPoolResponseData));
@@ -76,6 +135,14 @@ void handleSciReceive(SwappableMemoryPool* pSwappableMemoryPool)
 				scheduler_scheduleTask(&scheduler, handleMemoryPoolResponse, pData);
 			}
 			break;
+        // Status
+        case 0x0B:
+            // not implemented yet
+            break;
+        // Display
+        case 0x0C:
+            // not implemented yet
+            break;
 		default:
 			break;
 		}
@@ -88,7 +155,7 @@ void taskEncoder(void* unused)
 {
     enc_data_t data;
     Com_Status_t status;
-    
+
 	// read encoder
     status = readencoder(&data);
 
@@ -120,7 +187,7 @@ void taskIrSensor(void* unused)
     {
         myirtimer = 0;
     }
-    
+
     scheduler_scheduleTask(&scheduler, taskIrSensor, NULL);
 }
 
@@ -129,7 +196,7 @@ void taskControlMotors(void* unused)
     static uint8 olddriveval = 0;
     uint16 speedleft = 0;
     uint16 speedright = 0;
-    
+
     // control motors
     speedleft = 0xffff;
     speedright = 0xffff;
@@ -220,14 +287,14 @@ void taskControlMotors(void* unused)
         PTFD_PTFD2 ^= 1;
     }
     olddriveval = driveval;
-    
+
     scheduler_scheduleTask(&scheduler, taskControlMotors, NULL);
 }
 
 void taskSciReceive(void* unused)
 {
 	handleSciReceive(&swappableMemoryPool);
-    
+
     scheduler_scheduleTask(&scheduler, taskSciReceive, NULL);
 }
 
@@ -254,11 +321,11 @@ void taskSendStatus(void* unused)
 		cmd[3] = freePages;
 		cmd[4] = PAGE_SIZE;
 		bt_enqueue(cmd, sizeof(cmd));
-		
+
 		//test: sending up memory pool
 	    bufferNo = swappableMemoryPool_swapOut(&swappableMemoryPool, pool->pages, sizeof(Page) * PAGE_POOL_SIZE);
 	}
-	
+
     scheduler_scheduleTask(&scheduler, taskSendStatus, NULL);
 }
 
@@ -268,12 +335,13 @@ void init()
     enc_setup_t setup;
     setup.byte = 0x00;
     setup.flags.carrieren = 1;
-    
+    setup.flags.oleden = 1;
+
     malloc_init();
     queue_init(&bt_sendQueue, 128);
     queue_init(&bt_receiveQueue, 128);
     swappableMemoryPool_init(&swappableMemoryPool, malloc_getPagePool(), &bt_enqueue);
-    
+
     hardware_lowlevel_init();
     EnableInterrupts;               // Interrupts aktivieren
 
@@ -298,7 +366,7 @@ void main(void)
     scheduler_scheduleTask(&scheduler, taskControlMotors, NULL);
     scheduler_scheduleTask(&scheduler, taskSciReceive, NULL);
     scheduler_scheduleTask(&scheduler, taskSendStatus, NULL);
-	
+
 	scheduler_execute(&scheduler);
 
     for(;;)

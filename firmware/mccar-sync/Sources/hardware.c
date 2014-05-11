@@ -16,6 +16,13 @@ static uint8 bt_datacnt;
 Queue bt_sendQueue;
 Queue bt_receiveQueue;
 
+uint8 ledleftred = 0;
+uint8 ledleftgreen = 0;
+uint8 ledleftblue = 0;
+uint8 ledrightred = 0;
+uint8 ledrightgreen = 0;
+uint8 ledrightblue = 0;
+
 uint8 bt_send_busy;
 
 /**
@@ -411,7 +418,7 @@ void bt_senddata(uint8* data, uint8 size)
 void bt_enqueue(uint8* data, uint8 size)
 {
 	int i;
-	
+
 	//HACK (interrupt routine halts to work sometimes)
 	while (queue_getUsedSpace(&bt_sendQueue) > 0)
 	{
@@ -424,7 +431,7 @@ void bt_enqueue(uint8* data, uint8 size)
 			}
 		}
 	}
-	
+
 	if (!queue_enqueue(&bt_sendQueue, data, size))
 		FATAL_ERROR();
 

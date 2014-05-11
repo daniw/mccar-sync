@@ -17,6 +17,14 @@ extern Queue bt_sendQueue;
 extern Queue bt_receiveQueue;
 extern uint8 bt_send_busy;
 
+extern uint8 ledleftred;
+extern uint8 ledleftgreen;
+extern uint8 ledleftblue;
+extern uint8 ledrightred;
+extern uint8 ledrightgreen;
+extern uint8 ledrightblue;
+
+
 interrupt void isr_RTC(void)        // RTC
 {
     return;
