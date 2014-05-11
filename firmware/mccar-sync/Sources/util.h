@@ -15,6 +15,8 @@
  */
 void _memset(void* pData, uint8 value, int num);
 
+void _memcpy(void* pSrc, void* pTarget, int num);
+
 #define FATAL_ERROR() do { } while (1)
 
 #endif /* UTIL_H_ */

@@ -38,6 +38,21 @@ extern uint8 bt_send_busy;
 
 Scheduler scheduler;
 
+typedef struct
+{
+	uint8 command[SCI_CMD_AND_PAYLOAD_SIZE + 1];
+	SwappableMemoryPool* pSwappableMemoryPool;
+} MemoryPoolResponseData;
+
+void handleMemoryPoolResponse(void* data)
+{
+	MemoryPoolResponseData* pData = data;
+
+	swappableMemoryPool_handleResponse(pData->pSwappableMemoryPool, pData->command);
+	
+	_free(pData);
+}
+
 void handleSciReceive(SwappableMemoryPool* pSwappableMemoryPool)
 {
 	uint8 command[SCI_CMD_AND_PAYLOAD_SIZE + 1];
@@ -49,10 +64,17 @@ void handleSciReceive(SwappableMemoryPool* pSwappableMemoryPool)
 		switch (command[0])
 		{
 		case 0x01:
-			driveval = command[1];
+			{
+				driveval = command[1];
+			}
 			break;
 		case 0x0A:
-			swappableMemoryPool_handleResponse(pSwappableMemoryPool, command);
+			{
+				MemoryPoolResponseData* pData = _malloc(sizeof(MemoryPoolResponseData));
+				_memcpy(pData->command, command, SCI_CMD_AND_PAYLOAD_SIZE + 1);
+				pData->pSwappableMemoryPool = pSwappableMemoryPool;
+				scheduler_scheduleTask(&scheduler, handleMemoryPoolResponse, pData);
+			}
 			break;
 		default:
 			break;
@@ -209,54 +231,73 @@ void taskSciReceive(void* unused)
     scheduler_scheduleTask(&scheduler, taskSciReceive, NULL);
 }
 
+void taskSendStatus(void* unused)
+{
+	static counter = 0;
+	uint16 bufferNo;
+	uint8 i;
+	uint8 usedPages = 0;
+	uint8 freePages;
+	PagePool* pool;
+	if ((++counter % 10000) == 0)
+	{
+		uint8 cmd[5];
+		cmd[0] = 0x0d;
+		cmd[1] = taskqueue_getUsedSpace(&scheduler.taskQueue);
+		pool = malloc_getPagePool();
+		for (i = 0; i < PAGE_POOL_SIZE; ++i)
+		{
+			usedPages += pool->amountOfOccupiedPagesAhead[i];
+		}
+		freePages = PAGE_POOL_SIZE - usedPages;
+		cmd[2] = usedPages;
+		cmd[3] = freePages;
+		cmd[4] = PAGE_SIZE;
+		bt_enqueue(cmd, sizeof(cmd));
+		
+		//test: sending up memory pool
+	    bufferNo = swappableMemoryPool_swapOut(&swappableMemoryPool, pool->pages, sizeof(Page) * PAGE_POOL_SIZE);
+	}
+	
+    scheduler_scheduleTask(&scheduler, taskSendStatus, NULL);
+}
+
+void init()
+{
+    Com_Status_t status;
+    enc_setup_t setup;
+    setup.byte = 0x00;
+    setup.flags.carrieren = 1;
+    
+    malloc_init();
+    queue_init(&bt_sendQueue, 128);
+    queue_init(&bt_receiveQueue, 128);
+    swappableMemoryPool_init(&swappableMemoryPool, malloc_getPagePool(), &bt_enqueue);
+    
+    hardware_lowlevel_init();
+    EnableInterrupts;               // Interrupts aktivieren
+
+    PTDD |= LED_B;                  // Switch rear LED on
+    while(getjoystick() != PUSH){}  // Wait until joystick is pushed
+
+    status = setupencoder(setup);
+    PTED |= IR_FM;                  // switch front IR LED on to detect obstacles in front of MCCar
+}
+
 /**
  * main program
  */
 void main(void)
 {
-    Direction_t d = STOP;
-    uint16 line[8];
-    enc_setup_t setup;
-    uint8 testData[10];
-    uint16 bufferNo;
-    Com_Status_t status;
-    setup.byte = 0x00;
-    setup.flags.carrieren = 1;
-
-    malloc_init();
-    queue_init(&bt_sendQueue, 128);
-    queue_init(&bt_receiveQueue, 128);
-    hardware_lowlevel_init();
-    EnableInterrupts;               // Interrupts aktivieren
-
-    PTDD |= LED_B;                  // Switch rear LED on
-
-    while(getjoystick() != PUSH){}  // Wait until joystick is pushed
-
-    status = setupencoder(setup);
-    PTED |= IR_FM;                  // switch front IR LED on to detect obstacles in front of MCCar
-
-    swappableMemoryPool_init(&swappableMemoryPool, malloc_getPagePool(), &bt_enqueue);
-
-    {
-    	int i;
-    	for (i = 0; i < 10; ++i)
-    	{
-    	    testData[i] = i + 20;
-    	}
-    }
-
-	do
-	{
-	    bufferNo = swappableMemoryPool_swapOut(&swappableMemoryPool, testData, sizeof(testData));
-	} while (bufferNo == 0);
+    init();
 
 	scheduler_init(&scheduler);
 
-    scheduler_scheduleTask(&scheduler, taskEncoder, NULL);
+    //scheduler_scheduleTask(&scheduler, taskEncoder, NULL);
     scheduler_scheduleTask(&scheduler, taskIrSensor, NULL);
     scheduler_scheduleTask(&scheduler, taskControlMotors, NULL);
     scheduler_scheduleTask(&scheduler, taskSciReceive, NULL);
+    scheduler_scheduleTask(&scheduler, taskSendStatus, NULL);
 	
 	scheduler_execute(&scheduler);
 
