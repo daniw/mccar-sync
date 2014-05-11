@@ -62,18 +62,20 @@ void handleSciReceive(SwappableMemoryPool* pSwappableMemoryPool)
 
 SwappableMemoryPool swappableMemoryPool;
 
-void taskDefault(void* unused)
+void taskEncoder(void* unused)
 {
-    static unsigned char myirtimer = 0;
-    static uint8 olddriveval = 0;
     enc_data_t data;
     Com_Status_t status;
-    uint16 speedleft = 0;
-    uint16 speedright = 0;
-	handleSciReceive(&swappableMemoryPool);
-
+    
 	// read encoder
     status = readencoder(&data);
+
+    scheduler_scheduleTask(&scheduler, taskEncoder, NULL);
+}
+
+void taskIrSensor(void* unused)
+{
+    static unsigned char myirtimer = 0;
 
     // read ir sensor
     if(myirtimer++ < 3)
@@ -96,7 +98,16 @@ void taskDefault(void* unused)
     {
         myirtimer = 0;
     }
+    
+    scheduler_scheduleTask(&scheduler, taskIrSensor, NULL);
+}
 
+void taskControlMotors(void* unused)
+{
+    static uint8 olddriveval = 0;
+    uint16 speedleft = 0;
+    uint16 speedright = 0;
+    
     // control motors
     speedleft = 0xffff;
     speedright = 0xffff;
@@ -188,7 +199,14 @@ void taskDefault(void* unused)
     }
     olddriveval = driveval;
     
-    scheduler_scheduleTask(&scheduler, taskDefault, NULL);
+    scheduler_scheduleTask(&scheduler, taskControlMotors, NULL);
+}
+
+void taskSciReceive(void* unused)
+{
+	handleSciReceive(&swappableMemoryPool);
+    
+    scheduler_scheduleTask(&scheduler, taskSciReceive, NULL);
 }
 
 /**
@@ -235,7 +253,10 @@ void main(void)
 
 	scheduler_init(&scheduler);
 
-    scheduler_scheduleTask(&scheduler, taskDefault, NULL);
+    scheduler_scheduleTask(&scheduler, taskEncoder, NULL);
+    scheduler_scheduleTask(&scheduler, taskIrSensor, NULL);
+    scheduler_scheduleTask(&scheduler, taskControlMotors, NULL);
+    scheduler_scheduleTask(&scheduler, taskSciReceive, NULL);
 	
 	scheduler_execute(&scheduler);
 

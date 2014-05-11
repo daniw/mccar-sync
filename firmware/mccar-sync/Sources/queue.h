@@ -5,6 +5,9 @@
  *      Author: Adrian
  */
 
+#ifndef QUEUE_H_
+#define QUEUE_H_
+
 #include "platform.h"
 
 typedef struct
@@ -25,3 +28,5 @@ bool queue_enqueueByte(Queue* pQueue, uint8 data);
 
 bool queue_dequeue(Queue* pQueue, uint8* data, uint8 size);
 uint8 queue_dequeueByte(Queue* pQueue);
+
+#endif /* QUEUE_H_ */
