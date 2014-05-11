@@ -4,6 +4,9 @@
 
 \begin{document}
 \begin{landscape}
+
+TODO: all cmds have now 12 bytes
+
 \begin{tabular}{lllllllll}
 Command &
     Byte 0 &
@@ -13,7 +16,11 @@ Command &
     Byte 4 &
     Byte 5 &
     Byte 6 &
-    Byte 7 \\
+    Byte 7 &
+    Byte 8 &
+    Byte 9 &
+    Byte 10 &
+    Byte 11 \\
 Move &
     0x01 &
     Direction &
@@ -70,7 +77,8 @@ Acceleration &
     crc8 \\
 Beep &
     0x07 &
-    Bufferno &
+    Bufferno high &
+    Bufferno low &
     - &
     - &
     - &
@@ -79,7 +87,8 @@ Beep &
     crc8 \\
 RequestData &
     0x08 &
-    Bufferno &
+    Bufferno high &
+    Bufferno low &
     - &
     - &
     - &
@@ -88,8 +97,10 @@ RequestData &
     crc8 \\
 WriteData &
     0x09 &
-    Bufferno &
-    Offset &
+    Bufferno high &
+    Bufferno low &
+    Offset high &
+    Offset low &
     Data &
     Data &
     Data &
@@ -97,7 +108,8 @@ WriteData &
     crc8 \\
 HandleRequestedData &
     0x0A &
-    Bufferno &
+    Bufferno high &
+    Bufferno low &
     Data &
     Data &
     Data &

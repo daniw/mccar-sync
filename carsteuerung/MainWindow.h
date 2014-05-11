@@ -1,11 +1,14 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/thread.hpp>
+
 #include <QMainWindow>
 
-#include <SerialStream.h>
-#include <boost/thread.hpp>
 #include <atomic>
+
+#include <SerialStream.h>
 
 namespace Ui {
 class MainWindow;

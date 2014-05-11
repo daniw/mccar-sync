@@ -4,7 +4,7 @@
 #include <boost/crc.hpp>
 #include <iostream>
 
-constexpr size_t getPayloadSize() { return 6; }
+constexpr size_t getPayloadSize() { return 10 /*+cmd +crc*/; }
 
 template <typename Payload>
 class DataPacket
@@ -100,7 +100,7 @@ void writePayloadToStream(std::ostream& strm, crc_8& crc, const Payload& payload
 	RestoreFlagsCheckpointContext savedFlags{strm};
 	strm.unsetf(std::ios_base::skipws);
 
-	const char* pRawData = reinterpret_cast<const char*>(&payload);
+	const unsigned char* pRawData = reinterpret_cast<const unsigned char*>(&payload);
 
 	//data
 	for (size_t i = 0; i < sizeof(Payload); ++i)
@@ -112,7 +112,7 @@ void writePayloadToStream(std::ostream& strm, crc_8& crc, const Payload& payload
 	//Padding
 	for (size_t i = 0; i < (getPayloadSize() - sizeof(Payload)); ++i)
 	{
-		strm << static_cast<char>(0);
+		strm << static_cast<unsigned char>(0);
 		crc.process_byte(0);
 	}
 }
@@ -123,12 +123,12 @@ void readPayloadFromStream(std::istream& strm, crc_8& crc, Payload& payload)
 	RestoreFlagsCheckpointContext savedFlags{strm};
 	strm.unsetf(std::ios_base::skipws);
 
-	char* pRawData = reinterpret_cast<char*>(&payload);
+	unsigned char* pRawData = reinterpret_cast<unsigned char*>(&payload);
 
 	//data
 	for (size_t i = 0; i < sizeof(Payload); ++i)
 	{
-		char tmp;
+		unsigned char tmp;
 		strm >> tmp;
 		pRawData[i] = tmp;
 		crc.process_byte(pRawData[i]);
@@ -137,7 +137,7 @@ void readPayloadFromStream(std::istream& strm, crc_8& crc, Payload& payload)
 	//Padding
 	for (size_t i = 0; i < (getPayloadSize() - sizeof(Payload)); ++i)
 	{
-		char padding;
+		unsigned char padding;
 		strm >> padding;
 		crc.process_byte(padding);
 	}
@@ -151,12 +151,12 @@ std::ostream& operator <<(std::ostream& strm, const RequestDataPacket<Payload>& 
 
 	crc_8 crc;
 
-    strm << static_cast<char>(Payload::cmd_id);
+	strm << static_cast<unsigned char>(Payload::cmd_id);
 
 	writePayloadToStream(strm, crc, dataPacket.payload);
 
 	//checksum
-	strm << static_cast<char>(crc.checksum());
+	strm << static_cast<unsigned char>(crc.checksum());
 
 	return strm;
 }
@@ -172,9 +172,9 @@ std::istream& operator >>(std::istream& strm, RequestDataPacket<Payload>& dataPa
 	readPayloadFromStream(strm, crc, dataPacket.payload);
 
 	//checksum
-	char slaveCalculatedCrc;
+	unsigned char slaveCalculatedCrc;
 	strm >> slaveCalculatedCrc;
-	dataPacket.checksumIsOk = static_cast<char>(crc.checksum()) == slaveCalculatedCrc;
+	dataPacket.checksumIsOk = static_cast<unsigned char>(crc.checksum()) == slaveCalculatedCrc;
 
 	return strm;
 }
@@ -185,12 +185,12 @@ std::ostream& operator <<(std::ostream& strm, const ResponseDataPacket<Payload>&
 {
 	crc_8 crc;
 
-	strm << (dataPacket.ack ? char(1) : char(0));
+	strm << (dataPacket.ack ? (unsigned char)(1) : (unsigned char)(0));
 
 	writePayloadToStream(strm, crc, dataPacket.payload);
 
 	//checksum
-	strm << static_cast<char>(crc.checksum());
+	strm << static_cast<unsigned char>(crc.checksum());
 
 	return strm;
 }
@@ -200,16 +200,16 @@ std::istream& operator >>(std::istream& strm, ResponseDataPacket<Payload>& dataP
 {
 	crc_8 crc;
 
-	char ack;
+	unsigned char ack;
 	strm >> ack;
 	dataPacket.ack = ack;
 
 	readPayloadFromStream(strm, crc, dataPacket.payload);
 
 	//checksum
-	char slaveCalculatedCrc;
+	unsigned char slaveCalculatedCrc;
 	strm >> slaveCalculatedCrc;
-	dataPacket.checksumIsOk = static_cast<char>(crc.checksum()) == slaveCalculatedCrc;
+	dataPacket.checksumIsOk = static_cast<unsigned char>(crc.checksum()) == slaveCalculatedCrc;
 
 	return strm;
 }
@@ -276,23 +276,27 @@ struct __attribute__ ((packed)) BeepPayload
 
 struct __attribute__ ((packed)) RequestDataPayload
 {
-    enum { cmd_id = 0x08 };
-    uint8_t bufferNo;
+	enum { cmd_id = 0x08 };
+	uint8_t bufferNoHigh;
+	uint8_t bufferNoLow;
 };
 
 struct __attribute__ ((packed)) WriteDataPayload
 {
-    enum { cmd_id = 0x09 };
-    uint8_t bufferNo;
-    uint8_t offset;
-    uint8_t data[4];
+	enum { cmd_id = 0x09 };
+	uint8_t bufferNoHigh;
+	uint8_t bufferNoLow;
+	uint8_t offsetHigh;
+	uint8_t offsetLow;
+	uint8_t data[getPayloadSize() - 4];
 };
 
 struct __attribute__ ((packed)) HandleRequestedDataPayload
 {
-    enum { cmd_id = 0x0A };
-    uint8_t bufferNo;
-    uint8_t data[5] = {};
+	enum { cmd_id = 0x0A };
+	uint8_t bufferNoHigh;
+	uint8_t bufferNoLow;
+	uint8_t data[getPayloadSize() - 2] = {};
 };
 
 

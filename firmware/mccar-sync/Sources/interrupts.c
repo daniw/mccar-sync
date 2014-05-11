@@ -6,16 +6,15 @@
  */
 #include "interrupts.h"
 
+#include "queue.h"
+#include "util.h"
+
 extern uint8* bt_dataptr;
 extern uint8 bt_datacnt;
 extern uint8 driveval;
 
-extern uint8 bt_readbuf[];
-extern uint8 bt_readbufread;
-extern uint8 bt_readbufwrite;
-extern uint8 bt_sendbuf[];
-extern uint8 bt_sendbufread;
-extern uint8 bt_sendbufwrite;
+extern Queue bt_sendQueue;
+extern Queue bt_receiveQueue;
 extern uint8 bt_send_busy;
 
 interrupt void isr_RTC(void)        // RTC
@@ -62,10 +61,9 @@ interrupt void isr_SCI1T(void)      // SCI1 transmit
 {
 	if (SCI1S1_TC)
 	{
-		uint16 i;
-		if ((uint8)(bt_sendbufwrite - bt_sendbufread) > 0)
+		if (queue_getUsedSpace(&bt_sendQueue) > 0)
 		{
-			SCI1D = bt_sendbuf[bt_sendbufread++];
+			SCI1D = queue_dequeueByte(&bt_sendQueue);
 		}
 		else
 		{
@@ -81,10 +79,7 @@ interrupt void isr_SCI1R(void)      // SCI1 receive
 	uint8 temp;
 	if (SCI1S1_RDRF)
 	{
-
-		temp = SCI1D;
-		//SCI1D = temp;  	// Echo
-		bt_readbuf[bt_readbufwrite++] = temp;
+		queue_enqueueByte(&bt_receiveQueue, SCI1D);
 	}
 	else
 	{

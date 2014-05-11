@@ -22,36 +22,59 @@
 #include "encoder.h"    /* include encoder driver */
 #include "malloc.h"
 #include "swappableMemory.h"
+#include "util.h"
+#include "pagepool.h"
+#include "queue.h"
+#include "scheduler.h"
 
 #define STEERING 0x2000
 
 uint8 driveval = 0;
 int16 trimsteering = 0;
 
-extern uint8 bt_readbuf[];
-extern uint8 bt_readbufread;
-extern uint8 bt_readbufwrite;
-extern uint8 bt_sendbuf[];
-extern uint8 bt_sendbufread;
-extern uint8 bt_sendbufwrite;
+extern Queue bt_sendQueue;
+extern Queue bt_receiveQueue;
+extern uint8 bt_send_busy;
+
+Scheduler scheduler;
+
+typedef struct
+{
+	uint8 command[SCI_CMD_AND_PAYLOAD_SIZE + 1];
+	SwappableMemoryPool* pSwappableMemoryPool;
+} MemoryPoolResponseData;
+
+void handleMemoryPoolResponse(void* data)
+{
+	MemoryPoolResponseData* pData = data;
+
+	swappableMemoryPool_handleResponse(pData->pSwappableMemoryPool, pData->command);
+	
+	_free(pData);
+}
 
 void handleSciReceive(SwappableMemoryPool* pSwappableMemoryPool)
 {
-	uint8 i;
-	uint8 temp[8];
-	if ((uint8)(bt_readbufwrite - bt_readbufread) > 7)
+	uint8 command[SCI_CMD_AND_PAYLOAD_SIZE + 1];
+	while (queue_getUsedSpace(&bt_receiveQueue) >= sizeof(command))
 	{
-		for (i = 0; i < 8; i++)
-		{
-			temp[i] = bt_readbuf[bt_readbufread++];
-		}
-		switch (temp[0])
+		if (!queue_dequeue(&bt_receiveQueue, command, sizeof(command)))
+			FATAL_ERROR();
+		
+		switch (command[0])
 		{
 		case 0x01:
-			driveval = temp[1];
+			{
+				driveval = command[1];
+			}
 			break;
 		case 0x0A:
-			swappableMemoryPool_handleResponse(pSwappableMemoryPool, temp);
+			{
+				MemoryPoolResponseData* pData = _malloc(sizeof(MemoryPoolResponseData));
+				_memcpy(pData->command, command, SCI_CMD_AND_PAYLOAD_SIZE + 1);
+				pData->pSwappableMemoryPool = pSwappableMemoryPool;
+				scheduler_scheduleTask(&scheduler, handleMemoryPoolResponse, pData);
+			}
 			break;
 		default:
 			break;
@@ -59,205 +82,224 @@ void handleSciReceive(SwappableMemoryPool* pSwappableMemoryPool)
 	}
 }
 
+SwappableMemoryPool swappableMemoryPool;
+
+void taskEncoder(void* unused)
+{
+    enc_data_t data;
+    Com_Status_t status;
+    
+	// read encoder
+    status = readencoder(&data);
+
+    scheduler_scheduleTask(&scheduler, taskEncoder, NULL);
+}
+
+void taskIrSensor(void* unused)
+{
+    static unsigned char myirtimer = 0;
+
+    // read ir sensor
+    if(myirtimer++ < 3)
+    {
+        PTED |= IR_FM;
+    }
+    else
+    {
+        PTED &= ~IR_FM;
+    }
+    if((PTED & IR_RX_F))
+    {
+        PTDD &= ~LED_B;
+    }
+    else
+    {
+        PTDD |= LED_B;
+    }
+    if(myirtimer > 30)
+    {
+        myirtimer = 0;
+    }
+    
+    scheduler_scheduleTask(&scheduler, taskIrSensor, NULL);
+}
+
+void taskControlMotors(void* unused)
+{
+    static uint8 olddriveval = 0;
+    uint16 speedleft = 0;
+    uint16 speedright = 0;
+    
+    // control motors
+    speedleft = 0xffff;
+    speedright = 0xffff;
+    if (trimsteering > 0)
+    {
+    	speedleft -= trimsteering;
+    }
+    else
+    {
+    	speedright += trimsteering;
+    }
+
+    switch (driveval & 0x0f)
+    {
+    case 0x01:
+    	motorcontrol(FORWARD,speedleft,speedright);
+    	break;
+    case 0x09:
+    	motorcontrol(FORWARD,speedleft - STEERING,speedright);
+    	break;
+    case 0x08:
+    	motorcontrol(CURVELEFT,0x0000,speedright);
+    	break;
+    case 0x0C:
+    	motorcontrol(BACKWARD,speedleft - STEERING,speedright);
+    	break;
+    case 0x04:
+    	motorcontrol(BACKWARD,speedleft,speedright);
+    	break;
+    case 0x06:
+    	motorcontrol(BACKWARD,speedleft,speedright - STEERING);
+    	break;
+    case 0x02:
+    	motorcontrol(CURVERIGHT,speedleft,0x0000);
+    	break;
+    case 0x03:
+    	motorcontrol(FORWARD,speedleft,speedright - STEERING);
+    	break;
+    case 0x00:
+    	motorcontrol(STOP,0x0000,0x0000);
+    	break;
+    default:
+    	motorcontrol(STOP,0x0000,0x0000);
+    	break;
+    }
+    if (driveval & 0x10)
+    {
+    	trimsteering += 0x0001;
+    }
+    if (driveval & 0x20)
+    {
+    	trimsteering -= 0x0001;
+    }
+    /*switch (driveval & 0x30)
+    {
+    	case 0x10:
+    		PTFD_PTFD1 = 0;
+    		PTFD_PTFD2 = 1;
+    		break;
+    	case 0x20:
+    		PTFD_PTFD1 = 1;
+    		PTFD_PTFD2 = 0;
+    		break;
+    	case 0x30:
+    		PTFD_PTFD1 = 0;
+    		PTFD_PTFD2 = 0;
+    		break;
+    	default:
+    		PTFD_PTFD1 = 1;
+    		PTFD_PTFD2 = 1;
+    		break;
+    }*/
+    if (driveval & 0x40)
+    {
+    	PTFD_PTFD3 ^= 1;
+    }
+    else
+    {
+    	PTFD_PTFD3 = 0;
+    }
+    if ((driveval & 0x80) && !(olddriveval & 0x80))
+    {
+        PTCD_PTCD4 ^= 1;
+        PTCD_PTCD6 ^= 1;
+        PTED_PTED7 ^= 1;
+        PTFD_PTFD0 ^= 1;
+        PTFD_PTFD1 ^= 1;
+        PTFD_PTFD2 ^= 1;
+    }
+    olddriveval = driveval;
+    
+    scheduler_scheduleTask(&scheduler, taskControlMotors, NULL);
+}
+
+void taskSciReceive(void* unused)
+{
+	handleSciReceive(&swappableMemoryPool);
+    
+    scheduler_scheduleTask(&scheduler, taskSciReceive, NULL);
+}
+
+void taskSendStatus(void* unused)
+{
+	static counter = 0;
+	uint16 bufferNo;
+	uint8 i;
+	uint8 usedPages = 0;
+	uint8 freePages;
+	PagePool* pool;
+	if ((++counter % 10000) == 0)
+	{
+		uint8 cmd[5];
+		cmd[0] = 0x0d;
+		cmd[1] = taskqueue_getUsedSpace(&scheduler.taskQueue);
+		pool = malloc_getPagePool();
+		for (i = 0; i < PAGE_POOL_SIZE; ++i)
+		{
+			usedPages += pool->amountOfOccupiedPagesAhead[i];
+		}
+		freePages = PAGE_POOL_SIZE - usedPages;
+		cmd[2] = usedPages;
+		cmd[3] = freePages;
+		cmd[4] = PAGE_SIZE;
+		bt_enqueue(cmd, sizeof(cmd));
+		
+		//test: sending up memory pool
+	    bufferNo = swappableMemoryPool_swapOut(&swappableMemoryPool, pool->pages, sizeof(Page) * PAGE_POOL_SIZE);
+	}
+	
+    scheduler_scheduleTask(&scheduler, taskSendStatus, NULL);
+}
+
+void init()
+{
+    Com_Status_t status;
+    enc_setup_t setup;
+    setup.byte = 0x00;
+    setup.flags.carrieren = 1;
+    
+    malloc_init();
+    queue_init(&bt_sendQueue, 128);
+    queue_init(&bt_receiveQueue, 128);
+    swappableMemoryPool_init(&swappableMemoryPool, malloc_getPagePool(), &bt_enqueue);
+    
+    hardware_lowlevel_init();
+    EnableInterrupts;               // Interrupts aktivieren
+
+    PTDD |= LED_B;                  // Switch rear LED on
+    while(getjoystick() != PUSH){}  // Wait until joystick is pushed
+
+    status = setupencoder(setup);
+    PTED |= IR_FM;                  // switch front IR LED on to detect obstacles in front of MCCar
+}
+
 /**
  * main program
  */
 void main(void)
 {
-    uint16 speedleft = 0;
-    uint16 speedright = 0;
-    uint8 olddriveval;
-    Direction_t d = STOP;
-    uint16 line[8];
-    enc_data_t data;
-    Com_Status_t status;
-    unsigned char myirtimer = 0;
-    uint8 i;
-    enc_setup_t setup;
-    SwappableMemoryPool swappableMemoryPool;
-    uint8 testData[10];
-    uint8 bufferNo;
-    setup.byte = 0x00;
-    setup.flags.carrieren = 1;
+    init();
 
-    malloc_init();
-    hardware_lowlevel_init();
-    EnableInterrupts;               // Interrupts aktivieren
+	scheduler_init(&scheduler);
 
-    PTDD |= LED_B;                  // Switch rear LED on
-
-    while(getjoystick() != PUSH){}  // Wait until joystick is pushed
-
-    status = setupencoder(setup);
-    PTED |= IR_FM;                  // switch front IR LED on to detect obstacles in front of MCCar
-
-    swappableMemoryPool_init(&swappableMemoryPool, malloc_getPagePool(), &bt_enqueue);
-
-    {
-    	int i;
-    	for (i = 0; i < 10; ++i)
-    	{
-    	    testData[i] = i + 20;
-    	}
-    }
-
-    bufferNo = swappableMemoryPool_swapOut(&swappableMemoryPool, testData, sizeof(testData));
-
-    {
-    	int i;
-    	for (i = 0; i < 10; ++i)
-    	{
-    	    testData[i] = 0;
-    	}
-    }
-    swappableMemoryPool_requestSwapIn(&swappableMemoryPool, bufferNo, testData, sizeof(testData));
-    while (swappableMemoryPool_isSwapInPending(&swappableMemoryPool, bufferNo))
-    {
-    	handleSciReceive(&swappableMemoryPool);
-    	/*waiting*/
-    }
-
-    _malloc(255);
-    _malloc(128);
-
-    while (1)
-    {
-    	handleSciReceive(&swappableMemoryPool);
-
-    	// read encoder
-        status = readencoder(&data);
-
-        // read ir sensor
-        if(myirtimer++ < 3)
-        {
-            PTED |= IR_FM;
-        }
-        else
-        {
-            PTED &= ~IR_FM;
-        }
-        if((PTED & IR_RX_F))
-        {
-            PTDD &= ~LED_B;
-        }
-        else
-        {
-            PTDD |= LED_B;
-        }
-        if(myirtimer > 30)
-        {
-            myirtimer = 0;
-        }
-
-        // control motors
-        speedleft = 0xffff;
-        speedright = 0xffff;
-        if (trimsteering > 0)
-        {
-        	speedleft -= trimsteering;
-        }
-        else
-        {
-        	speedright += trimsteering;
-        }
-
-        switch (driveval & 0x0f)
-        {
-        case 0x01:
-        	motorcontrol(FORWARD,speedleft,speedright);
-        	break;
-        case 0x09:
-        	motorcontrol(FORWARD,speedleft - STEERING,speedright);
-        	break;
-        case 0x08:
-        	motorcontrol(CURVELEFT,0x0000,speedright);
-        	break;
-        case 0x0C:
-        	motorcontrol(BACKWARD,speedleft - STEERING,speedright);
-        	break;
-        case 0x04:
-        	motorcontrol(BACKWARD,speedleft,speedright);
-        	break;
-        case 0x06:
-        	motorcontrol(BACKWARD,speedleft,speedright - STEERING);
-        	break;
-        case 0x02:
-        	motorcontrol(CURVERIGHT,speedleft,0x0000);
-        	break;
-        case 0x03:
-        	motorcontrol(FORWARD,speedleft,speedright - STEERING);
-        	break;
-        case 0x00:
-        	motorcontrol(STOP,0x0000,0x0000);
-        	break;
-        default:
-        	motorcontrol(STOP,0x0000,0x0000);
-        	break;
-        }
-        if (driveval & 0x10)
-        {
-        	trimsteering += 0x0001;
-        }
-        if (driveval & 0x20)
-        {
-        	trimsteering -= 0x0001;
-        }
-        /*switch (driveval & 0x30)
-        {
-        	case 0x10:
-        		PTFD_PTFD1 = 0;
-        		PTFD_PTFD2 = 1;
-        		break;
-        	case 0x20:
-        		PTFD_PTFD1 = 1;
-        		PTFD_PTFD2 = 0;
-        		break;
-        	case 0x30:
-        		PTFD_PTFD1 = 0;
-        		PTFD_PTFD2 = 0;
-        		break;
-        	default:
-        		PTFD_PTFD1 = 1;
-        		PTFD_PTFD2 = 1;
-        		break;
-        }*/
-        if (driveval & 0x40)
-        {
-        	PTFD_PTFD3 ^= 1;
-        }
-        else
-        {
-        	PTFD_PTFD3 = 0;
-        }
-        if ((driveval & 0x80) && !(olddriveval & 0x80))
-        {
-            PTCD_PTCD4 ^= 1;
-            PTCD_PTCD6 ^= 1;
-            PTED_PTED7 ^= 1;
-            PTFD_PTFD0 ^= 1;
-            PTFD_PTFD1 ^= 1;
-            PTFD_PTFD2 ^= 1;
-        }
-        olddriveval = driveval;
-        {
-        	uint8 *arr1, *arr2;
-        	int i;
-            arr1 = _malloc(sizeof(uint8) * 100);
-            arr2 = _malloc(sizeof(uint8) * 100);
-            _free(arr1);
-            _free(arr2);
-
-            for (i = 0; i < 100; ++i)
-            {
-            	arr1[i] = 0xff;
-            }
-            for (i = 0; i < 100; ++i)
-            {
-            	arr2[i] = 0xff;
-            }
-        }
-    }
-
+    //scheduler_scheduleTask(&scheduler, taskEncoder, NULL);
+    scheduler_scheduleTask(&scheduler, taskIrSensor, NULL);
+    scheduler_scheduleTask(&scheduler, taskControlMotors, NULL);
+    scheduler_scheduleTask(&scheduler, taskSciReceive, NULL);
+    scheduler_scheduleTask(&scheduler, taskSendStatus, NULL);
+	
+	scheduler_execute(&scheduler);
 
     for(;;)
     {
