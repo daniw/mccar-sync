@@ -20,6 +20,12 @@ datasheets/*.pdf
 *.pro.user.*
 *~
 
+carsteuerung/*.o
+carsteuerung/Makefile
+carsteuerung/carsteuerung
+carsteuerung/moc_MainWindow.cpp
+carsteuerung/ui_MainWindow.h
+
 *.swp
 
 doc/*.aux
