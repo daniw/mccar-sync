@@ -36,14 +36,15 @@ void MainWindow::printLog(QString text)
 
 void MainWindow::on_connectButton_clicked()
 {
-    serialStream.SetBaudRate(LibSerial::SerialStreamBuf::BAUD_9600);
-    serialStream.SetNumOfStopBits(0);
-    serialStream.SetParity(LibSerial::SerialStreamBuf::PARITY_NONE);
-    serialStream.SetCharSize(LibSerial::SerialStreamBuf::CHAR_SIZE_8);
-
 	serialStream.Open(ui->serialPort->text().toStdString());
 	if (serialStream.IsOpen())
     {
+		//Set Config afterwards!!!
+		serialStream.SetBaudRate(LibSerial::SerialStreamBuf::BAUD_9600);
+		serialStream.SetNumOfStopBits(0);
+		serialStream.SetParity(LibSerial::SerialStreamBuf::PARITY_NONE);
+		serialStream.SetCharSize(LibSerial::SerialStreamBuf::CHAR_SIZE_8);
+
         ui->log->appendPlainText("Successfully opened serial port " + ui->serialPort->text());
         programState = ProgramState::Connected;
 	}
@@ -92,15 +93,17 @@ void MainWindow::worker()
                 RequestDataPacket<WriteDataPayload> data;
                 serialStream >> data;
 
-                printLog(QString("receiving data for buffer ") + QString::number(data.payload.bufferNo) + " (offset: " + QString::number(data.payload.offset) + ") ...");
-                if (data.payload.offset != m_swapCache[data.payload.bufferNo].size())
+				uint16_t bufferNo = data.payload.bufferNoHigh << 8 | data.payload.bufferNoLow;
+				uint16_t offset = data.payload.offsetHigh << 8 | data.payload.offsetLow;
+				printLog(QString("receiving data for buffer ") + QString::number(bufferNo) + " (offset: " + QString::number(offset) + ", " + QString::number(data.payload.offsetHigh) + ":" + QString::number(data.payload.offsetLow) + ") ...");
+				if (offset != m_swapCache[bufferNo].size())
                 {
-                    m_swapCache[data.payload.bufferNo].clear();
+					m_swapCache[bufferNo].clear();
                 }
 
                 for (auto entry : data.payload.data)
                 {
-                    m_swapCache[data.payload.bufferNo].push_back(entry);
+					m_swapCache[bufferNo].push_back(entry);
                 }
             }
             else if (cmd == RequestDataPayload::cmd_id)
@@ -108,18 +111,20 @@ void MainWindow::worker()
                 RequestDataPacket<RequestDataPayload> data;
                 serialStream >> data;
 
-                printLog(QString("sending buffer no ") + QString::number(data.payload.bufferNo) + "...");
-                const auto& relevantCache = m_swapCache[data.payload.bufferNo];
+				uint16_t bufferNo = data.payload.bufferNoHigh << 8 | data.payload.bufferNoLow;
+				const auto& relevantCache = m_swapCache[bufferNo];
                 uint8_t i = 0;
                 while (i < relevantCache.size())
                 {
                     HandleRequestedDataPayload payload;
-                    payload.bufferNo = data.payload.bufferNo;
+					payload.bufferNoHigh = data.payload.bufferNoHigh;
+					payload.bufferNoLow = data.payload.bufferNoLow;
                     for (uint8_t j = 0; j < sizeof(payload.data) && i < relevantCache.size(); ++i, ++j)
                     {
                         payload.data[j] = relevantCache[i];
                     }
-                    serialStream << RequestDataPacket<HandleRequestedDataPayload>(payload);
+					printLog(QString("sending buffer no ") + QString::number(bufferNo) + "...");
+					serialStream << RequestDataPacket<HandleRequestedDataPayload>(payload);
                 }
                 printLog(QString("...buffer sent"));
             }
