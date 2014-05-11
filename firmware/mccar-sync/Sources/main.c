@@ -23,6 +23,7 @@
 #include "malloc.h"
 #include "swappableMemory.h"
 #include "util.h"
+#include "pagepool.h"
 #include "queue.h"
 
 #define STEERING 0x2000
@@ -36,11 +37,10 @@ extern uint8 bt_send_busy;
 
 void handleSciReceive(SwappableMemoryPool* pSwappableMemoryPool)
 {
-	uint8 i;
-	uint8 command[8];
-	if (queue_getUsedSpace(&bt_receiveQueue) >= 8)
+	uint8 command[SCI_CMD_AND_PAYLOAD_SIZE + 1];
+	while (queue_getUsedSpace(&bt_receiveQueue) >= sizeof(command))
 	{
-		if (!queue_dequeue(&bt_receiveQueue, command, 8))
+		if (!queue_dequeue(&bt_receiveQueue, command, sizeof(command)))
 			FATAL_ERROR();
 		
 		switch (command[0])
@@ -70,15 +70,16 @@ void main(void)
     enc_data_t data;
     Com_Status_t status;
     unsigned char myirtimer = 0;
-    uint8 i;
     enc_setup_t setup;
     SwappableMemoryPool swappableMemoryPool;
     uint8 testData[10];
-    uint8 bufferNo;
+    uint16 bufferNo;
     setup.byte = 0x00;
     setup.flags.carrieren = 1;
 
     malloc_init();
+    queue_init(&bt_sendQueue, 128);
+    queue_init(&bt_receiveQueue, 128);
     hardware_lowlevel_init();
     EnableInterrupts;               // Interrupts aktivieren
 
@@ -99,7 +100,10 @@ void main(void)
     	}
     }
 
-    bufferNo = swappableMemoryPool_swapOut(&swappableMemoryPool, testData, sizeof(testData));
+	do
+	{
+	    bufferNo = swappableMemoryPool_swapOut(&swappableMemoryPool, testData, sizeof(testData));
+	} while (bufferNo == 0);
 
     {
     	int i;
@@ -114,9 +118,17 @@ void main(void)
     	handleSciReceive(&swappableMemoryPool);
     	/*waiting*/
     }
-
-    _malloc(255);
-    _malloc(128);
+    
+    {
+    	int i;
+    	for  (i = 0; i < 4; ++i)
+    	{
+    		do
+    		{
+    			bufferNo = swappableMemoryPool_swapOut(&swappableMemoryPool, 0xa000, 0xe000 - 0xa000);
+    		} while (bufferNo == 0);
+    	}
+    }
 
     while (1)
     {
@@ -237,23 +249,6 @@ void main(void)
             PTFD_PTFD2 ^= 1;
         }
         olddriveval = driveval;
-        {
-        	uint8 *arr1, *arr2;
-        	int i;
-            arr1 = _malloc(sizeof(uint8) * 100);
-            arr2 = _malloc(sizeof(uint8) * 100);
-            _free(arr1);
-            _free(arr2);
-
-            for (i = 0; i < 100; ++i)
-            {
-            	arr1[i] = 0xff;
-            }
-            for (i = 0; i < 100; ++i)
-            {
-            	arr2[i] = 0xff;
-            }
-        }
     }
 
 

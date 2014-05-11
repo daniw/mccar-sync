@@ -9,12 +9,13 @@
 
 typedef struct
 {
-	uint8 buffer[256];
+	uint8* pBuffer;
+	uint8 bufferSize;
 	uint8 readPos;
 	uint8 writePos;
 } Queue;
 
-void queue_init(Queue* pQueue);
+void queue_init(Queue* pQueue, uint8 bufferSize);
 
 uint8 queue_getFreeSpace(Queue* pQueue);
 uint8 queue_getUsedSpace(Queue* pQueue);

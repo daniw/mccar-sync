@@ -5,9 +5,9 @@
  *      Author: Adrian
  */
 
-#include "platform.h"
+#include "util.h"
 
-void memset(void* pData, int value, int num)
+void _memset(void* pData, uint8 value, int num)
 {
 	uint8* pRealData = (uint8*)pData;
 	int i;
