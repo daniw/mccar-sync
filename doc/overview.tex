@@ -1,0 +1,293 @@
+\begin{landscape}
+\begin{footnotesize}
+\begin{tabular}{lllllllllllll}
+Command &
+    Byte 0 &
+    Byte 1 &
+    Byte 2 &
+    Byte 3 &
+    Byte 4 &
+    Byte 5 &
+    Byte 6 &
+    Byte 7 &
+    Byte 8 &
+    Byte 9 &
+    Byte 10 &
+    Byte 11 \\
+Move &
+    0x01 &
+    Direction &
+    - &
+    - &
+    - &
+    - &
+    - &
+    - &
+    - &
+    - &
+    - &
+    crc8 \\
+FollowLine &
+    0x02 &
+    Type &
+    speed &
+    - &
+    - &
+    - &
+    - &
+    - &
+    - &
+    - &
+    - &
+    crc8 \\
+ConfigPID &
+    0x03 &
+    kpleft &
+    kileft &
+    kdleft &
+    kpright &
+    kiright &
+    kdright &
+    - &
+    - &
+    - &
+    - &
+    crc8 \\
+LEDColor &
+    0x04 &
+    redleft &
+    greenleft &
+    blueleft &
+    redright &
+    greenright &
+    blueright &
+    - &
+    - &
+    - &
+    - &
+    crc8 \\
+Colorsensor &
+    0x05 &
+    red &
+    green &
+    blue &
+    - &
+    - &
+    - &
+    - &
+    - &
+    - &
+    - &
+    crc8 \\
+Acceleration &
+    0x06 &
+    xhigh &
+    xlow &
+    yhigh &
+    ylow &
+    zhigh &
+    zlow &
+    - &
+    - &
+    - &
+    - &
+    crc8 \\
+Beep &
+    0x07 &
+    Bufferno high &
+    Bufferno low &
+    - &
+    - &
+    - &
+    - &
+    - &
+    - &
+    - &
+    - &
+    crc8 \\
+RequestData &
+    0x08 &
+    Bufferno high &
+    Bufferno low &
+    - &
+    - &
+    - &
+    - &
+    - &
+    - &
+    - &
+    - &
+    crc8 \\
+WriteData &
+    0x09 &
+    Bufferno high &
+    Bufferno low &
+    Offset high &
+    Offset low &
+    Data &
+    Data &
+    Data &
+    Data &
+    - &
+    - &
+    crc8 \\
+HandleRequestedData &
+    0x0A &
+    Bufferno high &
+    Bufferno low &
+    Data &
+    Data &
+    Data &
+    Data &
+    Data &
+    - &
+    - &
+    - &
+    crc8 \\
+Status &
+    0x0B &
+    voltagehigh &
+    voltagelow &
+    currenthigh &
+    currentlow &
+    status &
+    Buffer &
+    - &
+    - &
+    - &
+    - &
+    crc8 \\
+Display &
+    0x0C &
+    Bufferno &
+    Data &
+    Data &
+    Data &
+    Data &
+    Data &
+    - &
+    - &
+    - &
+    - &
+    crc8 \\
+ &
+    0x &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+    crc8 \\
+ &
+    0x &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+    crc8 \\
+ &
+    0x &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+    crc8 \\
+ &
+    0x &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+    crc8 \\
+ &
+    0x &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+    crc8 \\
+ &
+    0x &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+    crc8 \\
+ &
+    0x &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+    crc8 \\
+ &
+    0x &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+    crc8 \\
+ &
+    0x &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+     &
+    crc8 \\
+
+\end{tabular}
+\end{footnotesize}
+\end{landscape}
