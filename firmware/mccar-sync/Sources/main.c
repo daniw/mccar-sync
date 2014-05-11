@@ -22,36 +22,34 @@
 #include "encoder.h"    /* include encoder driver */
 #include "malloc.h"
 #include "swappableMemory.h"
+#include "util.h"
+#include "queue.h"
 
 #define STEERING 0x2000
 
 uint8 driveval = 0;
 int16 trimsteering = 0;
 
-extern uint8 bt_readbuf[];
-extern uint8 bt_readbufread;
-extern uint8 bt_readbufwrite;
-extern uint8 bt_sendbuf[];
-extern uint8 bt_sendbufread;
-extern uint8 bt_sendbufwrite;
+extern Queue bt_sendQueue;
+extern Queue bt_receiveQueue;
+extern uint8 bt_send_busy;
 
 void handleSciReceive(SwappableMemoryPool* pSwappableMemoryPool)
 {
 	uint8 i;
-	uint8 temp[8];
-	if ((uint8)(bt_readbufwrite - bt_readbufread) > 7)
+	uint8 command[8];
+	if (queue_getUsedSpace(&bt_receiveQueue) >= 8)
 	{
-		for (i = 0; i < 8; i++)
-		{
-			temp[i] = bt_readbuf[bt_readbufread++];
-		}
-		switch (temp[0])
+		if (!queue_dequeue(&bt_receiveQueue, command, 8))
+			FATAL_ERROR();
+		
+		switch (command[0])
 		{
 		case 0x01:
-			driveval = temp[1];
+			driveval = command[1];
 			break;
 		case 0x0A:
-			swappableMemoryPool_handleResponse(pSwappableMemoryPool, temp);
+			swappableMemoryPool_handleResponse(pSwappableMemoryPool, command);
 			break;
 		default:
 			break;
