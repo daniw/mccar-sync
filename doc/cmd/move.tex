@@ -1,0 +1,40 @@
+\section{Move}
+
+\subsection{Description}
+Sends one Byte with Information for manual car steering. 
+This Byte is divided in three parts. Those are steering, trimming and 
+signals. \\
+Steering uses Bits 0 to 3. This way each Bit represents a key if the car is 
+controlled with the cursor keys of a keyboard. \\\\
+\begin{tabular}{ll}
+Steering Value  & Direction \\
+0x00    & Stop \\
+0x01    & Forward \\
+0x02    & Turn right \\
+0x03    & Forward with right curve \\
+0x04    & Backward \\
+0x05    & Unused (Stop) \\
+0x06    & Backward with right corve \\
+0x07    & Unused (Stop) \\
+0x08    & Turn left \\
+0x09    & Forward with left curve \\
+0x0A    & Unused (Stop) \\
+0x0B    & Unused (Stop) \\
+0x0C    & Backward with left curve \\
+0x0D    & Unused (Stop) \\
+0x0E    & Unused (Stop) \\
+0x0F    & Unused (Stop) \\
+\end{tabular}\\\\
+\begin{tabular}{ll}
+Bit & Key on keyboard \\
+0   & $\Uparrow$ \\
+1   & $\Rightarrow$ \\
+2   & $\Downarrow$ \\
+3   & $\Leftarrow$ \\
+\end{tabular}\\\\
+Trimming uses Bits 4 and 5. Bit 4 trims to the left. Bit 5 trims to the 
+right. \\
+Bit 6 is used to control the signal horn. As long as it is set, the horn is 
+active. 
+Bit 7 is used to control the headlights. Every low to high transition of this 
+Bit toggles the headlights. 
