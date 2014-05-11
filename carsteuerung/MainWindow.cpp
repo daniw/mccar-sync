@@ -95,7 +95,7 @@ void MainWindow::worker()
 
 				uint16_t bufferNo = data.payload.bufferNoHigh << 8 | data.payload.bufferNoLow;
 				uint16_t offset = data.payload.offsetHigh << 8 | data.payload.offsetLow;
-				printLog(QString("receiving data for buffer ") + QString::number(bufferNo) + " (offset: " + QString::number(offset) + ", " + QString::number(data.payload.offsetHigh) + ":" + QString::number(data.payload.offsetLow) + ") ...");
+				printLog(QString("receiving data for buffer ") + QString::number(bufferNo) + " (offset: " + QString::number(offset) + ") ...");
 				if (offset != m_swapCache[bufferNo].size())
                 {
 					m_swapCache[bufferNo].clear();
