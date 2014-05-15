@@ -10,7 +10,7 @@
 #include "malloc.h"
 #include "util.h"
 
-void taskqueue_init(TaskQueue* pQueue	)
+void taskqueue_init(TaskQueue* pQueue)
 {
 	(void)_memset(pQueue->buffer, 0, 256);
 }

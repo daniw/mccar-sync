@@ -13,7 +13,7 @@
 
 void scheduler_init(Scheduler* pScheduler)
 {
-	taskqueue_init(&pScheduler->taskQueue, MAX_NUM_TASKS);
+	taskqueue_init(&pScheduler->taskQueue);
 }
 
 void scheduler_execute(Scheduler* pScheduler)

@@ -23,7 +23,7 @@ typedef struct
 	uint8 writePos;
 } TaskQueue;
 
-void taskqueue_init(TaskQueue* pQueue, uint8 bufferSize);
+void taskqueue_init(TaskQueue* pQueue);
 
 uint8 taskqueue_getFreeSpace(TaskQueue* pQueue);
 uint8 taskqueue_getUsedSpace(TaskQueue* pQueue);
