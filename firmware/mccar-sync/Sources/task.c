@@ -290,7 +290,7 @@ void taskSendStatus(void* unused)
 		bt_enqueue(cmd, sizeof(cmd));
 
 		//test: sending up memory pool
-	    bufferNo = swappableMemoryPool_swapOut(&swappableMemoryPool, pool->pages, sizeof(Page) * PAGE_POOL_SIZE);
+	    //bufferNo = swappableMemoryPool_swapOut(&swappableMemoryPool, pool->pages, sizeof(Page) * PAGE_POOL_SIZE);
 	}
 
     scheduler_scheduleTask(&scheduler, taskSendStatus, NULL);
