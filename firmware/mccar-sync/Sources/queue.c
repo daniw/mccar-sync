@@ -10,16 +10,14 @@
 #include "malloc.h"
 #include "util.h"
 
-void queue_init(Queue* pQueue, uint8 bufferSize)
+void queue_init(Queue* pQueue)
 {
-	pQueue->pBuffer = (uint8*)_malloc(bufferSize);
-	pQueue->bufferSize = bufferSize;
-	(void)_memset(pQueue->pBuffer, 0, pQueue->bufferSize);
+	(void)_memset(pQueue->buffer, 0, 256);
 }
 
 uint8 queue_getFreeSpace(Queue* pQueue)
 {
-	uint8 spaceInBuffer = (uint8)((pQueue->readPos - pQueue->writePos) % pQueue->bufferSize);
+	uint8 spaceInBuffer = (uint8)(pQueue->readPos - pQueue->writePos);
 	if (spaceInBuffer == 0)
 		return -1; //max uint8
 	else
@@ -28,7 +26,7 @@ uint8 queue_getFreeSpace(Queue* pQueue)
 
 uint8 queue_getUsedSpace(Queue* pQueue)
 {
-	uint8 usedSpace = (uint8)((pQueue->writePos - pQueue->readPos) % pQueue->bufferSize);
+	uint8 usedSpace = (uint8)(pQueue->writePos - pQueue->readPos);
 	return usedSpace;
 }
 
@@ -39,9 +37,8 @@ bool queue_enqueue(Queue* pQueue, uint8* data, uint8 size)
 		int i;
 		for (i = 0; i < size; i++)
 		{
-			pQueue->pBuffer[pQueue->writePos] = *(data++);
+			pQueue->buffer[pQueue->writePos] = *(data++);
 			++pQueue->writePos;
-			pQueue->writePos %= pQueue->bufferSize;
 		}
 
 		return TRUE;
@@ -61,8 +58,8 @@ bool queue_dequeue(Queue* pQueue, uint8* data, uint8 size)
 		int i;
 		for (i = 0; i < size; i++)
 		{
-			*(data++) = pQueue->pBuffer[pQueue->readPos];
-			pQueue->readPos = (pQueue->readPos + 1) % pQueue->bufferSize;
+			*(data++) = pQueue->buffer[pQueue->readPos];
+			++pQueue->readPos;
 		}
 		return TRUE;
 	}

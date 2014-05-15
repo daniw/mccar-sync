@@ -18,8 +18,7 @@ typedef struct
 
 typedef struct
 {
-	Task** pBuffer;
-	uint8 bufferSize;
+	Task* buffer[256];
 	uint8 readPos;
 	uint8 writePos;
 } TaskQueue;

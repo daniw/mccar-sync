@@ -338,8 +338,8 @@ void init()
     setup.flags.oleden = 1;
 
     malloc_init();
-    queue_init(&bt_sendQueue, 128);
-    queue_init(&bt_receiveQueue, 128);
+    queue_init(&bt_sendQueue);
+    queue_init(&bt_receiveQueue);
     swappableMemoryPool_init(&swappableMemoryPool, malloc_getPagePool(), &bt_enqueue);
 
     hardware_lowlevel_init();
