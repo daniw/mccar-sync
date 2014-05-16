@@ -104,39 +104,56 @@ interrupt void isr_SCI1E(void)      // SCI1 error
 interrupt void isr_TPM2O(void)      // TPM2 overflow
 {
     static uint8 cnt = 0;
+    struct
+    {
+    	uint8 leftred    : 1;
+        uint8 leftgreen  : 1;
+        uint8 leftblue   : 1;
+        uint8 rightred   : 1;
+        uint8 rightgreen : 1;
+        uint8 rightblue  : 1;
+        uint8 unused     : 2;
+    } color;
+    TPM2SC_TOF = 0;
     if (cnt == 0)
     {
-        PTFD_PTFD1 = 0;     // left red on
-        PTCD_PTCD4 = 0;     // left green on
-        PTFD_PTFD0 = 0;     // left blue on
-        PTFD_PTFD4 = 0;     // right red on
-        PTCD_PTCD6 = 0;     // right green on
-        PTED_PTED7 = 0;     // right blue on
+        color.leftred    = 0;       // left red on
+        color.leftgreen  = 0;       // left green on
+        color.leftblue   = 0;       // left blue on
+        color.rightred   = 0;       // right red on
+        color.rightgreen = 0;       // right green on
+        color.rightblue  = 0;       // right blue on
     }
     if (ledleftred <= cnt)
     {
-        PTFD_PTFD1 = 1;     // left red off
+        color.leftred    = 1;       // left red off
     }
     if (ledleftgreen <= cnt)
     {
-        PTCD_PTCD4 = 1;     // left green off
+        color.leftgreen  = 1;       // left green off
     }
     if (ledleftblue <= cnt)
     {
-        PTFD_PTFD0 = 1;     // left blue off
+        color.leftblue   = 1;       // left blue off
     }
     if (ledrightred <= cnt)
     {
-        PTFD_PTFD4 = 1;     // right red off
+        color.rightred   = 1;       // right red off
     }
     if (ledrightgreen <= cnt)
     {
-        PTCD_PTCD6 = 1;     // right green off
+        color.rightgreen = 1;       // right green off
     }
     if (ledrightblue <= cnt)
     {
-        PTED_PTED7 = 1;     // right blue off
+        color.rightblue  = 1;       // right blue off
     }
+    PTFD_PTFD1 = color.leftred;     // left red
+    PTCD_PTCD4 = color.leftgreen;   // left green
+    PTFD_PTFD0 = color.leftblue;    // left blue
+    PTFD_PTFD4 = color.rightred;    // right red
+    PTCD_PTCD6 = color.rightgreen;  // right green
+    PTED_PTED7 = color.rightblue;   // right blue
     cnt++;
     return;
 }

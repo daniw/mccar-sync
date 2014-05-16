@@ -77,9 +77,9 @@ void init()
 
     #ifdef BT_PRG
         bt_cmdon();
-        for (i = 0; i < 1000000; i++);
+        for (i = 0; i < 10000; i++);
         bt_setparam(param);
-        for (i = 0; i < 1000000; i++);
+        for (i = 0; i < 10000; i++);
         bt_cmdoff();
     #endif
     //bt_scibaud(BT_PRESCALER_115200);

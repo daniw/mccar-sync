@@ -246,12 +246,24 @@ void taskControlMotors(void* unused)
     }
     if ((driveval & 0x80) && !(olddriveval & 0x80))
     {
-        ledleftred    ^= 0xff;
-        ledleftgreen  ^= 0xff;
-        ledleftblue   ^= 0xff;
-        ledrightred   ^= 0xff;
-        ledrightgreen ^= 0xff;
-        ledrightblue  ^= 0xff;
+    	if (ledleftred)
+    	{
+            ledleftred    = 0x00;
+            ledleftgreen  = 0x00;
+            ledleftblue   = 0x00;
+            ledrightred   = 0x00;
+            ledrightgreen = 0x00;
+            ledrightblue  = 0x00;
+    	}
+    	else
+    	{
+    		ledleftred    = 0xff;
+            ledleftgreen  = 0xff;
+            ledleftblue   = 0xff;
+            ledrightred   = 0xff;
+            ledrightgreen = 0xff;
+            ledrightblue  = 0xff;
+    	}
     }
     olddriveval = driveval;
 
