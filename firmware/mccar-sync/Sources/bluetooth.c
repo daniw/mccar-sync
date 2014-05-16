@@ -7,6 +7,10 @@
 
 #include "bluetooth.h"
 
+extern Queue bt_sendQueue;
+extern Queue bt_receiveQueue;
+
+
 static uint8 busy = 0;
 static uint8 bt_str[64];
 
@@ -204,7 +208,41 @@ bt_uartparam_t bt_getparam(void)
 
 bt_success_t bt_setparam(bt_uartparam_t param)
 {
-	return SUCCESS;
+	uint8 ret[4];
+
+    bt_str[0] = 'A';
+	bt_str[1] = 'T';
+	bt_str[2] = '+';
+	bt_str[3] = 'U';
+	bt_str[4] = 'A';
+	bt_str[5] = 'R';
+	bt_str[6] = 'T';
+	bt_str[7] = '=';
+    bt_str[8] = '1';
+    bt_str[9] = '1';
+    bt_str[10] = '5';
+    bt_str[11] = '2';
+    bt_str[12] = '0';
+    bt_str[13] = '0';
+    bt_str[14] = ',';
+    bt_str[15] = '0';
+    bt_str[16] = ',';
+    bt_str[17] = '0';
+	bt_str[18] = '\r';
+	bt_str[19] = '\n';
+    if(!queue_enqueue(&bt_sendQueue, bt_str, 20))
+    {
+        return FAILED;
+    }
+    while (!queue_dequeue(&bt_receiveQueue, ret, 4));
+    if (ret[0] == 'O' && ret[1] == 'K' && ret[2] == '\r' && ret[3] == '\n')
+    {
+	    return SUCCESS;
+    }
+    else
+    {
+        return FAILED;
+    }
 }
 
 // 14 Query/Set Connection Mode

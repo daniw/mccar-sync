@@ -16,6 +16,9 @@
  * $Id: main.c 485 2014-06-03 21:17:55Z daniw $
  *--------------------------------------------------------------------
  */
+
+//#define BT_PRG
+
 #include "platform.h"   /* include peripheral declarations */
 #include "hardware.h"   /* include lowlevel hardware declarations */
 #include "i2c.h"        /* include i2c module drivers */
@@ -27,6 +30,7 @@
 #include "queue.h"
 #include "scheduler.h"
 #include "task.h"
+#include "bluetooth.h"
 
 extern Queue bt_sendQueue;
 extern Queue bt_receiveQueue;
@@ -47,6 +51,8 @@ void init()
 {
     Com_Status_t status;
     enc_setup_t setup;
+    bt_uartparam_t param;
+    uint32 i;
     setup.byte = 0x00;
     setup.flags.carrieren = 1;
     setup.flags.oleden = 1;
@@ -64,6 +70,19 @@ void init()
 
     status = setupencoder(setup);
     PTED |= IR_FM;                  // switch front IR LED on to detect obstacles in front of MCCar
+
+    param.baud = BT_BAUD_115200;
+    param.parity = NOPARITY;
+    param.stop = ONE;
+
+    #ifdef BT_PRG
+        bt_cmdon();
+        for (i = 0; i < 1000000; i++);
+        bt_setparam(param);
+        for (i = 0; i < 1000000; i++);
+        bt_cmdoff();
+    #endif
+    //bt_scibaud(BT_PRESCALER_115200);
 }
 
 /**

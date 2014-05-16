@@ -40,7 +40,7 @@ void MainWindow::on_connectButton_clicked()
 	if (serialStream.IsOpen())
     {
 		//Set Config afterwards!!!
-		serialStream.SetBaudRate(LibSerial::SerialStreamBuf::BAUD_9600);
+		serialStream.SetBaudRate(LibSerial::SerialStreamBuf::BAUD_115200);
 		serialStream.SetNumOfStopBits(0);
 		serialStream.SetParity(LibSerial::SerialStreamBuf::PARITY_NONE);
 		serialStream.SetCharSize(LibSerial::SerialStreamBuf::CHAR_SIZE_8);

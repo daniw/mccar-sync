@@ -9,6 +9,7 @@
 #define BLUETOOTH_H_
 
 #include "hardware.h"
+#include "queue.h"
 
 typedef enum bt_success_
 {
