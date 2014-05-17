@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+#include <Payload.h>
+
 namespace Ui {
 class StatusDisplayWidget;
 }
@@ -14,6 +16,8 @@ class StatusDisplayWidget : public QWidget
 public:
 	explicit StatusDisplayWidget(QWidget *parent = 0);
 	~StatusDisplayWidget();
+
+	void update(StatusPayload status);
 
 private:
 	Ui::StatusDisplayWidget *ui;

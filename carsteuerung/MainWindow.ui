@@ -34,6 +34,9 @@
      </layout>
     </item>
     <item>
+     <widget class="StatusDisplayWidget" name="statusDisplay" native="true"/>
+    </item>
+    <item>
      <widget class="QPlainTextEdit" name="log"/>
     </item>
     <item>
@@ -78,6 +81,12 @@
    <class>Controller</class>
    <extends>QTextEdit</extends>
    <header location="global">controller.h</header>
+  </customwidget>
+  <customwidget>
+   <class>StatusDisplayWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">StatusDisplayWidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
