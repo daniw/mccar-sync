@@ -128,6 +128,13 @@ void MainWindow::worker()
                 }
                 printLog(QString("...buffer sent"));
             }
+			else if (cmd == StatusPayload::cmd_id)
+			{
+				RequestDataPacket<StatusPayload> data;
+				serialStream >> data;
+
+				ui->statusDisplay->update(data.payload);
+			}
             else
             {
                 std::vector<std::string> unknownData(getPayloadSize());

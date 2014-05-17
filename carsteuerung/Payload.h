@@ -299,11 +299,20 @@ struct __attribute__ ((packed)) HandleRequestedDataPayload
 	uint8_t data[getPayloadSize() - 2] = {};
 };
 
-
 struct __attribute__ ((packed)) NotifyVersionPayload
 {
     enum { cmd_id = 0x10 };
     uint8_t version;
+};
+
+
+struct __attribute__ ((packed)) StatusPayload
+{
+	enum { cmd_id = 0x0d };
+	uint8_t taskQueueLoad;
+	uint8_t usedPages;
+	uint8_t freePages;
+	uint8_t pageSize;
 };
 
 #endif // Payload_H
