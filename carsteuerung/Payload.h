@@ -313,6 +313,8 @@ struct __attribute__ ((packed)) StatusPayload
 	uint8_t usedPages;
 	uint8_t freePages;
 	uint8_t pageSize;
+	uint8_t usedReceiveQueue;
+	uint8_t freeReceiveQueue;
 };
 
 #endif // Payload_H

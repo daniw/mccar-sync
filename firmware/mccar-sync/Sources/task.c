@@ -39,6 +39,7 @@ void handleMemoryPoolResponse(void* data)
 
 void handleSciReceive(SwappableMemoryPool* pSwappableMemoryPool)
 {
+	uint8 maxCommandsToProcessAtATime = 5;
 	uint8 command[SCI_CMD_AND_PAYLOAD_SIZE + 1];
 	while (queue_getUsedSpace(&bt_receiveQueue) >= sizeof(command))
 	{
@@ -113,6 +114,9 @@ void handleSciReceive(SwappableMemoryPool* pSwappableMemoryPool)
 		default:
 			break;
 		}
+
+		if (--maxCommandsToProcessAtATime == 0)
+			return; //abort
 	}
 }
 
@@ -285,9 +289,9 @@ void taskSendStatus(void* unused)
 	uint8 usedPages = 0;
 	uint8 freePages;
 	PagePool* pool;
-	if ((++counter % 10000) == 0)
+	if ((++counter % 1000) == 0)
 	{
-		uint8 cmd[5];
+		uint8 cmd[7];
 		cmd[0] = 0x0d;
 		cmd[1] = taskqueue_getUsedSpace(&scheduler.taskQueue);
 		pool = malloc_getPagePool();
@@ -299,6 +303,8 @@ void taskSendStatus(void* unused)
 		cmd[2] = usedPages;
 		cmd[3] = freePages;
 		cmd[4] = PAGE_SIZE;
+		cmd[5] = queue_getUsedSpace(&bt_receiveQueue);
+		cmd[6] = queue_getFreeSpace(&bt_receiveQueue);
 		bt_enqueue(cmd, sizeof(cmd));
 
 		//test: sending up memory pool

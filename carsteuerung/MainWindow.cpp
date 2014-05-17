@@ -21,7 +21,7 @@ MainWindow::~MainWindow()
     receiveThread.interrupt();
     if (!receiveThread.timed_join(boost::posix_time::seconds(1)))
     {
-        abort();
+		abort();
     }
 	delete ui;
 }
@@ -160,18 +160,13 @@ void MainWindow::worker()
 
 void MainWindow::on_echoTestButton_clicked()
 {
-    serialStream << RequestDataPacket<NotifyVersionPayload>(NotifyVersionPayload{1});
-//    printLog(QString() + "Start sending...");
-//    for (int i = 0; i < 80; ++i)
-//    {
-//        QApplication::processEvents();
-//        printLog(QString() + "on");
-//        serialStream << RequestDataPacket<MovePayload>(MovePayload{1 + 8 + 64 + 128});
+	//serialStream << RequestDataPacket<NotifyVersionPayload>(NotifyVersionPayload{1});
+	printLog(QString() + "Start sending...");
+	for (int i = 0; i < 20; ++i)
+	{
+		QApplication::processEvents();
+		serialStream << RequestDataPacket<NotifyVersionPayload>(NotifyVersionPayload{1});
 
-//        QApplication::processEvents();
-//        printLog(QString() + "off");
-//        serialStream << RequestDataPacket<MovePayload>(MovePayload{0});
-
-//    }
-//    printLog(QString() + "...sent");
+	}
+	printLog(QString() + "...sent");
 }
