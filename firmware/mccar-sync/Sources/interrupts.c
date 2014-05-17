@@ -114,6 +114,7 @@ interrupt void isr_TPM2O(void)      // TPM2 overflow
         uint8 rightblue  : 1;
         uint8 unused     : 2;
     } color;
+
     TPM2SC_TOF = 0;
     if (cnt == 0)
     {

@@ -210,16 +210,16 @@ bt_success_t bt_setparam(bt_uartparam_t param)
 {
 	uint8 ret[4];
 
-    bt_str[0] = 'A';
-	bt_str[1] = 'T';
-	bt_str[2] = '+';
-	bt_str[3] = 'U';
-	bt_str[4] = 'A';
-	bt_str[5] = 'R';
-	bt_str[6] = 'T';
-	bt_str[7] = '=';
-    bt_str[8] = '1';
-    bt_str[9] = '1';
+    bt_str[0]  = 'A';
+	bt_str[1]  = 'T';
+	bt_str[2]  = '+';
+	bt_str[3]  = 'U';
+	bt_str[4]  = 'A';
+	bt_str[5]  = 'R';
+	bt_str[6]  = 'T';
+	bt_str[7]  = '=';
+    bt_str[8]  = '1';
+    bt_str[9]  = '1';
     bt_str[10] = '5';
     bt_str[11] = '2';
     bt_str[12] = '0';
@@ -230,10 +230,7 @@ bt_success_t bt_setparam(bt_uartparam_t param)
     bt_str[17] = '0';
 	bt_str[18] = '\r';
 	bt_str[19] = '\n';
-    if(!queue_enqueue(&bt_sendQueue, bt_str, 20))
-    {
-        return FAILED;
-    }
+    bt_enqueue(bt_str, 20);
     while (!queue_dequeue(&bt_receiveQueue, ret, 4));
     if (ret[0] == 'O' && ret[1] == 'K' && ret[2] == '\r' && ret[3] == '\n')
     {

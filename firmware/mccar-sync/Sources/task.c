@@ -285,9 +285,10 @@ void taskSendStatus(void* unused)
 	uint8 usedPages = 0;
 	uint8 freePages;
 	PagePool* pool;
-	if ((++counter % 10000) == 0)
+	static uint8 cnt = 0;
+	if ((++counter % 1000) == 0)
 	{
-		uint8 cmd[5];
+		uint8 cmd[6];
 		cmd[0] = 0x0d;
 		cmd[1] = taskqueue_getUsedSpace(&scheduler.taskQueue);
 		pool = malloc_getPagePool();
@@ -299,7 +300,8 @@ void taskSendStatus(void* unused)
 		cmd[2] = usedPages;
 		cmd[3] = freePages;
 		cmd[4] = PAGE_SIZE;
-		bt_enqueue(cmd, sizeof(cmd));
+		cmd[5] = cnt++;
+		bt_enqueue_crc(cmd, sizeof(cmd));
 
 		//test: sending up memory pool
 	    //bufferNo = swappableMemoryPool_swapOut(&swappableMemoryPool, pool->pages, sizeof(Page) * PAGE_POOL_SIZE);

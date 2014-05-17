@@ -60,7 +60,7 @@ void init()
     malloc_init();
     queue_init(&bt_sendQueue);
     queue_init(&bt_receiveQueue);
-    swappableMemoryPool_init(&swappableMemoryPool, malloc_getPagePool(), &bt_enqueue);
+    swappableMemoryPool_init(&swappableMemoryPool, malloc_getPagePool(), &bt_enqueue_crc);
 
     hardware_lowlevel_init();
     EnableInterrupts;               // Interrupts aktivieren
@@ -76,13 +76,15 @@ void init()
     param.stop = ONE;
 
     #ifdef BT_PRG
+    	PTFD_PTFD1 = 0;
         bt_cmdon();
-        for (i = 0; i < 10000; i++);
+        //for (i = 0; i < 10000; i++);
         bt_setparam(param);
+        PTFD_PTFD1 = 1;
         for (i = 0; i < 10000; i++);
         bt_cmdoff();
     #endif
-    //bt_scibaud(BT_PRESCALER_115200);
+    bt_scibaud(BT_PRESCALER_115200);
 }
 
 /**

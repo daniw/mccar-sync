@@ -415,22 +415,9 @@ void bt_senddata(uint8* data, uint8 size)
     }
 }
 
-void bt_enqueue(uint8* data, uint8 size)
+void bt_enqueue_crc(uint8* data, uint8 size)
 {
 	int i;
-
-	//HACK (interrupt routine halts to work sometimes)
-	while (queue_getUsedSpace(&bt_sendQueue) > 0)
-	{
-		if (!bt_send_busy)
-		{
-			if (queue_getUsedSpace(&bt_sendQueue) > 0)
-			{
-				bt_send_busy = TRUE;
-				SCI1C2_TCIE = 1;
-			}
-		}
-	}
 
 	if (!queue_enqueue(&bt_sendQueue, data, size))
 		FATAL_ERROR();
@@ -443,16 +430,35 @@ void bt_enqueue(uint8* data, uint8 size)
 	if (!queue_enqueueByte(&bt_sendQueue, 0x00)) //checksum
 		FATAL_ERROR();
 
-	//HACK (interrupt routine halts to work sometimes)
-	while (queue_getUsedSpace(&bt_sendQueue) > 0)
+	if (!bt_send_busy)								// restart sci if stopped
 	{
-		if (!bt_send_busy)
+		if (queue_getUsedSpace(&bt_sendQueue) > 0)
 		{
-			if (queue_getUsedSpace(&bt_sendQueue) > 0)
-			{
-				bt_send_busy = TRUE;
-				SCI1C2_TCIE = 1;
-			}
+			bt_send_busy = TRUE;
+			SCI1C2_TCIE = 1;
+		}
+	}
+}
+
+void bt_enqueue(uint8* data, uint8 size)
+{
+	int i;
+
+	if (!queue_enqueue(&bt_sendQueue, data, size))
+		FATAL_ERROR();
+
+	for (i = size; i < SCI_CMD_AND_PAYLOAD_SIZE; i++)
+	{
+		if (!queue_enqueueByte(&bt_sendQueue, 0x00)) //padding (zeroes)
+			FATAL_ERROR();
+	}
+
+	if (!bt_send_busy)								// restart sci if stopped
+	{
+		if (queue_getUsedSpace(&bt_sendQueue) > 0)
+		{
+			bt_send_busy = TRUE;
+			SCI1C2_TCIE = 1;
 		}
 	}
 }
