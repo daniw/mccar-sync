@@ -16,15 +16,17 @@ SOURCES += main.cpp\
         MainWindow.cpp \
     controller.cpp \
     InvokeInEventLoop.cpp \
-    DoAtScopeExit.cpp
+    DoAtScopeExit.cpp \
+    StatusDisplayWidget.cpp
 
 HEADERS  += MainWindow.h \
     controller.h \
     InvokeInEventLoop.h \
     DoAtScopeExit.h \
-    Payload.h
+    Payload.h \
+    StatusDisplayWidget.h
 
-FORMS    += MainWindow.ui
+FORMS    += MainWindow.ui StatusDisplayWidget.ui
 
 LIBS += -lserial -lboost_thread -lboost_system
 QMAKE_CXXFLAGS += -std=c++11
