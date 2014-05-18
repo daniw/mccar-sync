@@ -28,6 +28,10 @@ extern uint8 ledrightred;
 extern uint8 ledrightgreen;
 extern uint8 ledrightblue;
 
+extern uint16 voltage;
+extern uint16 current;
+extern uint16 charge_status;
+
 void handleMemoryPoolResponse(void* data)
 {
 	MemoryPoolResponseData* pData = data;
@@ -283,6 +287,25 @@ void taskSciReceive(void* unused)
 
 void taskSendStatus(void* unused)
 {
+	static counter = 500;
+	if ((++counter % 1000) == 0)
+	{
+		uint8 cmd[8];
+		cmd[0] = 0x0b;
+		cmd[1] = (uint8) (voltage >> 8);
+		cmd[2] = (uint8) (voltage);
+		cmd[3] = (uint8) (current >> 8);
+		cmd[4] = (uint8) (current);
+		cmd[5] = (uint8) (charge_status >> 8);
+		cmd[6] = (uint8) (charge_status);
+		cmd[7] = 0;
+		bt_enqueue_crc(cmd, sizeof(cmd));
+	}
+	scheduler_scheduleTask(&scheduler, taskSendStatus, NULL);
+}
+
+void taskSendRessource(void* unused)
+{
 	static counter = 0;
 	uint16 bufferNo;
 	uint8 i;
@@ -311,5 +334,5 @@ void taskSendStatus(void* unused)
 	    //bufferNo = swappableMemoryPool_swapOut(&swappableMemoryPool, pool->pages, sizeof(Page) * PAGE_POOL_SIZE);
 	}
 
-    scheduler_scheduleTask(&scheduler, taskSendStatus, NULL);
+    scheduler_scheduleTask(&scheduler, taskSendRessource, NULL);
 }

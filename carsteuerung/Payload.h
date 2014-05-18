@@ -306,7 +306,7 @@ struct __attribute__ ((packed)) NotifyVersionPayload
 };
 
 
-struct __attribute__ ((packed)) StatusPayload
+struct __attribute__ ((packed)) RessourcePayload
 {
 	enum { cmd_id = 0x0d };
 	uint8_t taskQueueLoad;

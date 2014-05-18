@@ -17,7 +17,7 @@ StatusDisplayWidget::~StatusDisplayWidget()
 	delete ui;
 }
 
-void StatusDisplayWidget::update(StatusPayload status)
+void StatusDisplayWidget::update(RessourcePayload status)
 {
 	callFnDeferredAsync(this,  [=]() mutable
 	{

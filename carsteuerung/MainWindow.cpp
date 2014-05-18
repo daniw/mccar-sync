@@ -128,9 +128,9 @@ void MainWindow::worker()
                 }
                 printLog(QString("...buffer sent"));
             }
-			else if (cmd == StatusPayload::cmd_id)
+            else if (cmd == RessourcePayload::cmd_id)
 			{
-				RequestDataPacket<StatusPayload> data;
+                RequestDataPacket<RessourcePayload> data;
 				serialStream >> data;
 
 				ui->statusDisplay->update(data.payload);

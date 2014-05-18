@@ -17,7 +17,7 @@ public:
 	explicit StatusDisplayWidget(QWidget *parent = 0);
 	~StatusDisplayWidget();
 
-	void update(StatusPayload status);
+	void update(RessourcePayload status);
 
 private:
 	Ui::StatusDisplayWidget *ui;

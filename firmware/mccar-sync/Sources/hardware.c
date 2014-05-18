@@ -283,7 +283,6 @@ void startadc(void)
 {
 	PTAD |= LS_LED_MASK;		// Switch all line sensor leds off
 	ADCSC1_ADCH = 4;
-	return;
 }
 
 //### line sensor ###

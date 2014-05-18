@@ -32,5 +32,6 @@ void taskIrSensor(void* unused);
 void taskControlMotors(void* unused);
 void taskSciReceive(void* unused);
 void taskSendStatus(void* unused);
+void taskSendRessource(void* unused);
 
 #endif /* TASK_H_ */
