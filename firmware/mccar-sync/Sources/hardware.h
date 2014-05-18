@@ -261,8 +261,8 @@ D: High drive strength enabled (PTxDS)
 
 
 //### Analog digital converter ###
-//--- Signal conversion, module disabled ---
-#define ADCSC1_INIT     (ADCSC1_ADCH_MASK)
+//--- Single conversion, interrupt enabled, module disabled as no channel selected ---
+#define ADCSC1_INIT     (ADCSC1_AIEN_MASK | ADCSC1_ADCH_MASK)
 //--- Software trigger ---
 #define ADCSC2_INIT     (0)
 //--- ADCCV not in use ---

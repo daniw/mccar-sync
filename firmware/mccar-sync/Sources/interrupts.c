@@ -24,6 +24,10 @@ extern uint8 ledrightred;
 extern uint8 ledrightgreen;
 extern uint8 ledrightblue;
 
+extern uint16 linesensor[8];
+extern uint16 voltage;
+extern uint16 current;
+extern uint16 charge_status;
 
 interrupt void isr_RTC(void)        // RTC
 {
@@ -42,6 +46,193 @@ interrupt void isr_ACMP(void)       // ACMP
 
 interrupt void isr_ADC(void)        // ADC Conversion
 {
+	static int adcstate = 0;
+	static int linedark = 0;
+	switch (adcstate)
+    {
+        case 0:     // let the filters settle
+            PTAD |= LS_LED_MASK;
+            ADCSC1_ADCH = 4;
+            adcstate = 1;
+            break;
+        case 1:     // read dark value and switch ir led on
+            linedark = ADCR;
+            PTAD_PTAD4 = 0;
+            ADCSC1_ADCH = 4;
+            adcstate = 2;
+            break;
+        case 2:     // let the filters settle
+            ADCSC1_ADCH = 4;
+            adcstate = 3;
+            break;
+        case 3:     // switch all line sensor led off, read the bright value
+            PTAD |= LS_LED_MASK;
+            linesensor[0] = ADCR - linedark;
+            ADCSC1_ADCH = 4;
+            adcstate = 4;
+            break;
+        case 4:     // let the filters settle
+            ADCSC1_ADCH = 4;
+            adcstate = 5;
+            break;
+        case 5:     // read dark value and switch ir led on
+            linedark = ADCR;
+            PTAD_PTAD3 = 0;
+            ADCSC1_ADCH = 4;
+            adcstate = 6;
+            break;
+        case 6:     // let the filters settle
+            ADCSC1_ADCH = 4;
+            adcstate = 7;
+            break;
+        case 7:     // switch all line sensor led off, read the bright value
+            PTAD |= LS_LED_MASK;
+            linesensor[1] = ADCR - linedark;
+            ADCSC1_ADCH = 5;
+            adcstate = 8;
+            break;
+        case 8:     // let the filters settle
+            ADCSC1_ADCH = 5;
+            adcstate = 9;
+            break;
+        case 9:     // read dark value and switch ir led on
+            linedark = ADCR;
+            PTAD_PTAD3 = 0;
+            ADCSC1_ADCH = 5;
+            adcstate = 10;
+            break;
+        case 10:    // let the filters settle
+            ADCSC1_ADCH = 5;
+            adcstate = 11;
+            break;
+        case 11:    // switch all line sensor led off, read the bright value
+            PTAD |= LS_LED_MASK;
+            linesensor[2] = ADCR - linedark;
+            ADCSC1_ADCH = 5;
+            adcstate = 12;
+            break;
+        case 12:    // let the filters settle
+            ADCSC1_ADCH = 5;
+            adcstate = 13;
+            break;
+        case 13:    // read dark value and switch ir led on
+            linedark = ADCR;
+            PTAD_PTAD2 = 0;
+            ADCSC1_ADCH = 5;
+            adcstate = 14;
+            break;
+        case 14:    // let the filters settle
+            ADCSC1_ADCH = 5;
+            adcstate = 15;
+            break;
+        case 15:    // switch all line sensor led off, read the bright value
+            PTAD |= LS_LED_MASK;
+            linesensor[3] = ADCR - linedark;
+            ADCSC1_ADCH = 6;
+            adcstate = 16;
+            break;
+        case 16:    // let the filters settle
+            ADCSC1_ADCH = 6;
+            adcstate = 17;
+            break;
+        case 17:    // read dark value and switch ir led on
+            linedark = ADCR;
+            PTAD_PTAD2 = 0;
+            ADCSC1_ADCH = 6;
+            adcstate = 18;
+            break;
+        case 18:    // let the filters settle
+            ADCSC1_ADCH = 6;
+            adcstate = 19;
+            break;
+        case 19:    // switch all line sensor led off, read the bright value
+            PTAD |= LS_LED_MASK;
+            linesensor[4] = ADCR - linedark;
+            ADCSC1_ADCH = 6;
+            adcstate = 20;
+            break;
+        case 20:    // let the filters settle
+            ADCSC1_ADCH = 6;
+            adcstate = 21;
+            break;
+        case 21:    // read dark value and switch ir led on
+            linedark = ADCR;
+            PTAD_PTAD1 = 0;
+            ADCSC1_ADCH = 6;
+            adcstate = 22;
+            break;
+        case 22:    // let the filters settle
+            ADCSC1_ADCH = 6;
+            adcstate = 23;
+            break;
+        case 23:    // switch all line sensor led off, read the bright value
+            PTAD |= LS_LED_MASK;
+            linesensor[5] = ADCR - linedark;
+            ADCSC1_ADCH = 7;
+            adcstate = 24;
+            break;
+        case 24:    // let the filters settle
+            ADCSC1_ADCH = 7;
+            adcstate = 25;
+            break;
+        case 25:    // read dark value and switch ir led on
+            linedark = ADCR;
+            PTAD_PTAD1 = 0;
+            ADCSC1_ADCH = 7;
+            adcstate = 26;
+            break;
+        case 26:    // let the filters settle
+            ADCSC1_ADCH = 7;
+            adcstate = 27;
+            break;
+        case 27:    // switch all line sensor led off, read the bright value
+            PTAD |= LS_LED_MASK;
+            linesensor[6] = ADCR - linedark;
+            ADCSC1_ADCH = 7;
+            adcstate = 28;
+            break;
+        case 28:    // let the filters settle
+            ADCSC1_ADCH = 7;
+            adcstate = 29;
+            break;
+        case 29:    // read dark value and switch ir led on
+            linedark = ADCR;
+            PTAD_PTAD0 = 0;
+            ADCSC1_ADCH = 7;
+            adcstate = 30;
+            break;
+        case 30:    // let the filters settle
+            ADCSC1_ADCH = 7;
+            adcstate = 31;
+            break;
+        case 31:    // switch all line sensor led off, read the bright value, start current measurement
+            PTAD |= LS_LED_MASK;
+            linesensor[7] = ADCR - linedark;
+            ADCSC1_ADCH = 8;
+            adcstate = 32;
+            break;
+        case 32:    // measure current, start voltage measurement
+            current = ADCR;
+            ADCSC1_ADCH = 9;
+            adcstate = 33;
+            break;
+        case 33:    // measure voltage, start charge state measurement
+            voltage = ADCR;
+            ADCSC1_ADCH = 10;
+            adcstate = 34;
+            break;
+        case 34:    // measure charge status, start line sensor measurement
+            charge_status = ADCR;
+            PTAD |= LS_LED_MASK;
+            ADCSC1_ADCH = 0;
+            adcstate = 0;
+            break;
+        default:    // not defined adc state entered, throw away result and start line sensor measurement
+            PTAD |= LS_LED_MASK;
+            ADCSC1_ADCH = 0;
+            adcstate = 0;
+            break;
+	}
     return;
 }
 

@@ -25,6 +25,11 @@ uint8 ledrightblue = 0;
 
 uint8 bt_send_busy;
 
+uint16 linesensor[8];
+uint16 voltage;
+uint16 current;
+uint16 charge_status;
+
 /**
  * Initialise clock module, ports and timer
  * @author daniw
@@ -269,6 +274,17 @@ Joy_ways_t getjoystick(void)
     }
 }
 
+
+//### Initialize ADC conversions ###
+/**
+ *
+ */
+void startadc(void)
+{
+	PTAD |= LS_LED_MASK;		// Switch all line sensor leds off
+	ADCSC1_ADCH = 4;
+	return;
+}
 
 //### line sensor ###
 /**

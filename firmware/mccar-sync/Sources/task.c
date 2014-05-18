@@ -305,7 +305,7 @@ void taskSendStatus(void* unused)
 		cmd[4] = PAGE_SIZE;
 		cmd[5] = queue_getUsedSpace(&bt_receiveQueue);
 		cmd[6] = queue_getFreeSpace(&bt_receiveQueue);
-		bt_enqueue(cmd, sizeof(cmd));
+		bt_enqueue_crc(cmd, sizeof(cmd));
 
 		//test: sending up memory pool
 	    //bufferNo = swappableMemoryPool_swapOut(&swappableMemoryPool, pool->pages, sizeof(Page) * PAGE_POOL_SIZE);
