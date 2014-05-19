@@ -279,7 +279,8 @@ Joy_ways_t getjoystick(void)
 
 //### Initialize ADC conversions ###
 /**
- *
+ * Start first adc conversion
+ * Should not be called before the scheduler is initiated
  */
 void startadc(void)
 {

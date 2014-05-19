@@ -7,7 +7,7 @@
 
 #include "mcmath.h"
 
-//-- --
+//-- Expected value --
 // This function is created for 12 Bit values as x
 // and a size of 8.
 // For other values the boundaries need to be rechecked
@@ -26,7 +26,7 @@ uint8 expv(uint16* x, uint8 size)
 	return (uint8) z;
 }
 
-//-- --
+//-- Variance --
 // This function is created for 12 Bit values as x
 // and a size of 8.
 // For other values the boundaries need to be rechecked
@@ -36,7 +36,7 @@ uint16 var1(uint16* x, uint8 size)
 	return var2(x, size, expvResult);
 }
 
-//-- --
+//-- Variance with precalculated expected value --
 // This function is created for 12 Bit values as x
 // and a size of 8.
 // For other values the boundaries need to be rechecked

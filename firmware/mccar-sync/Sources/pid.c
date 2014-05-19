@@ -11,6 +11,10 @@ uint8 kp[2] = {0, 0};
 uint8 ki[2] = {0, 0};
 uint8 kd[2] = {0, 0};
 
+/**
+ * pid control system to control the mccars speed
+ * this function has to be called within a fixed period
+ */
 uint16 pid(uint16 currentspeed, uint16 targetspeed, uint8 motor)
 {
     static uint16 e[2] = {0, 0};

@@ -36,6 +36,9 @@ extern uint16 voltage;
 extern uint16 current;
 extern uint16 charge_status;
 
+/**
+ *
+ */
 void handleMemoryPoolResponse(void* data)
 {
 	MemoryPoolResponseData* pData = data;
@@ -45,6 +48,9 @@ void handleMemoryPoolResponse(void* data)
 	_free(pData);
 }
 
+/**
+ * Task to handle received commands
+ */
 void handleSciReceive(SwappableMemoryPool* pSwappableMemoryPool)
 {
 	uint8 maxCommandsToProcessAtATime = 5;
@@ -130,6 +136,9 @@ void handleSciReceive(SwappableMemoryPool* pSwappableMemoryPool)
 
 SwappableMemoryPool swappableMemoryPool;
 
+/**
+ * Task to read the encoder
+ */
 void taskEncoder(void* unused)
 {
     enc_data_t data;
@@ -141,6 +150,9 @@ void taskEncoder(void* unused)
     scheduler_scheduleTask(&scheduler, taskEncoder, NULL);
 }
 
+/**
+ * Task to read the ir sensor to detect obstacles in front of the mccar
+ */
 void taskIrSensor(void* unused)
 {
     static unsigned char myirtimer = 0;
@@ -170,6 +182,9 @@ void taskIrSensor(void* unused)
     scheduler_scheduleTask(&scheduler, taskIrSensor, NULL);
 }
 
+/**
+ * Task to manually control the movements of the mccar
+ */
 void taskControlMotors(void* unused)
 {
     static uint8 olddriveval = 0;
@@ -282,6 +297,9 @@ void taskControlMotors(void* unused)
     scheduler_scheduleTask(&scheduler, taskControlMotors, NULL);
 }
 
+/**
+ * Task to handle received commands through the SCI
+ */
 void taskSciReceive(void* unused)
 {
 	handleSciReceive(&swappableMemoryPool);
@@ -289,6 +307,9 @@ void taskSciReceive(void* unused)
     scheduler_scheduleTask(&scheduler, taskSciReceive, NULL);
 }
 
+/**
+ * Task to send battery voltage, supply current and charge status to host computer
+ */
 void taskSendStatus(void* unused)
 {
 	static counter = 500;
@@ -310,6 +331,9 @@ void taskSendStatus(void* unused)
 	scheduler_scheduleTask(&scheduler, taskSendStatus, NULL);
 }
 
+/**
+ * Task to send actual memory and buffer usage to host computer
+ */
 void taskSendRessource(void* unused)
 {
 	static counter = 0;

@@ -48,6 +48,10 @@ interrupt void isr_ACMP(void)       // ACMP
     return;
 }
 
+/**
+ * ADC interrupt service routine
+ * saves the measurement result if necessary and initiates the next conversion
+ */
 interrupt void isr_ADC(void)        // ADC Conversion
 {
 	static int adcstate = 0;
@@ -261,6 +265,10 @@ interrupt void isr_SCI2E(void)      // SCI2 error
     return;
 }
 
+/**
+ * SCI1 Transmit interrupt service routine
+ * Sends next byte if necessary
+ */
 interrupt void isr_SCI1T(void)      // SCI1 transmit
 {
 	if (SCI1S1_TC)
@@ -278,6 +286,10 @@ interrupt void isr_SCI1T(void)      // SCI1 transmit
     return;
 }
 
+/**
+ * SCI1 Receive interrupt service routine
+ * Copy received Byte in queue
+ */
 interrupt void isr_SCI1R(void)      // SCI1 receive
 {
 	uint8 temp;
@@ -297,6 +309,10 @@ interrupt void isr_SCI1E(void)      // SCI1 error
     return;
 }
 
+/**
+ * Timer 2 Overflow interrupt service routine
+ * Dimm the LEDs
+ */
 interrupt void isr_TPM2O(void)      // TPM2 overflow
 {
     static uint8 cnt = 0;
