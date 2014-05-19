@@ -33,5 +33,6 @@ void taskControlMotors(void* unused);
 void taskSciReceive(void* unused);
 void taskSendStatus(void* unused);
 void taskSendRessource(void* unused);
+void taskCalcLine(void* unused);
 
 #endif /* TASK_H_ */

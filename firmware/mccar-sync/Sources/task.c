@@ -6,6 +6,7 @@
  */
 
 #include "task.h"
+#include "mcmath.h"
 
 uint8 driveval = 0;
 int16 trimsteering = 0;
@@ -28,6 +29,9 @@ extern uint8 ledrightred;
 extern uint8 ledrightgreen;
 extern uint8 ledrightblue;
 
+extern uint16 linesensor[8];
+extern uint8  linepos;
+extern uint16 linewidth;
 extern uint16 voltage;
 extern uint16 current;
 extern uint16 charge_status;
@@ -290,7 +294,7 @@ void taskSendStatus(void* unused)
 	static counter = 500;
 	if ((++counter % 1000) == 0)
 	{
-		uint8 cmd[8];
+		uint8 cmd[10];
 		cmd[0] = 0x0b;
 		cmd[1] = (uint8) (voltage >> 8);
 		cmd[2] = (uint8) (voltage);
@@ -298,7 +302,9 @@ void taskSendStatus(void* unused)
 		cmd[4] = (uint8) (current);
 		cmd[5] = (uint8) (charge_status >> 8);
 		cmd[6] = (uint8) (charge_status);
-		cmd[7] = 0;
+		cmd[7] = linepos;
+		cmd[8] = (uint8) (linewidth >> 8);
+		cmd[9] = (uint8) (linewidth);
 		bt_enqueue_crc(cmd, sizeof(cmd));
 	}
 	scheduler_scheduleTask(&scheduler, taskSendStatus, NULL);
@@ -335,4 +341,31 @@ void taskSendRessource(void* unused)
 	}
 
     scheduler_scheduleTask(&scheduler, taskSendRessource, NULL);
+}
+
+/**
+ * Task to calculate the actual position and width of the line below
+ */
+void taskCalcLine(void* unused)
+{
+	static counter = 250;
+	uint16 linesensorcorr[8];
+	uint8 i;
+	uint16 max = 0;
+	if ((++counter % 1000) == 0)
+	{
+		// invert results for detecting a black line, not needed for a white line
+		for (i = 0; i < 8; i++)
+		{
+			max = linesensor[i] > max ? linesensor[i] : max;
+		}
+		for (i = 0; i < 8; i++)
+		{
+			linesensorcorr[i] = max - linesensor[i];
+		}
+		// Calculate Position
+		linepos = expv(linesensorcorr, 8);
+		linewidth = var2(linesensorcorr, 8, linepos);
+	}
+	scheduler_scheduleTask(&scheduler, taskCalcLine, NULL);
 }

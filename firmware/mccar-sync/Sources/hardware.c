@@ -26,6 +26,8 @@ uint8 ledrightblue = 0;
 uint8 bt_send_busy;
 
 uint16 linesensor[8];
+uint8  linepos;
+uint16 linewidth;
 uint16 voltage;
 uint16 current;
 uint16 charge_status;

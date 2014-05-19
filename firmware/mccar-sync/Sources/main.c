@@ -69,7 +69,7 @@ void init()
     while(getjoystick() != PUSH){}  // Wait until joystick is pushed
 
     status = setupencoder(setup);
-    startadc();
+
     PTED |= IR_FM;                  // switch front IR LED on to detect obstacles in front of MCCar
 
     param.baud = BT_BAUD_115200;
@@ -98,11 +98,14 @@ void main(void)
 	scheduler_init(&scheduler);
 
     //scheduler_scheduleTask(&scheduler, taskEncoder, NULL);
-    scheduler_scheduleTask(&scheduler, taskIrSensor, NULL);
+    //scheduler_scheduleTask(&scheduler, taskIrSensor, NULL);
     scheduler_scheduleTask(&scheduler, taskControlMotors, NULL);
     scheduler_scheduleTask(&scheduler, taskSciReceive, NULL);
     scheduler_scheduleTask(&scheduler, taskSendRessource, NULL);
     scheduler_scheduleTask(&scheduler, taskSendStatus, NULL);
+    scheduler_scheduleTask(&scheduler, taskCalcLine, NULL);
+
+    startadc();			// Schould not be started before scheduler is set up
 
 	scheduler_execute(&scheduler);
 
