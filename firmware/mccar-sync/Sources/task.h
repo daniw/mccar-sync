@@ -17,8 +17,6 @@
 #include "i2c.h"
 #include "encoder.h"
 
-#define STEERING 0x2000
-
 typedef struct
 {
 	uint8 command[SCI_CMD_AND_PAYLOAD_SIZE + 1];
@@ -27,7 +25,6 @@ typedef struct
 
 void handleMemoryPoolResponse(void* data);
 void handleSciReceive(SwappableMemoryPool* pSwappableMemoryPool);
-void taskEncoder(void* unused);
 void taskIrSensor(void* unused);
 void taskControlMotors(void* unused);
 void taskSciReceive(void* unused);

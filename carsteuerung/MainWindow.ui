@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>733</width>
+    <height>499</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,7 +34,14 @@
      </layout>
     </item>
     <item>
-     <widget class="StatusDisplayWidget" name="statusDisplay" native="true"/>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="ResourceStatusDisplayWidget" name="resourceStatus" native="true"/>
+      </item>
+      <item>
+       <widget class="CommonStatusDisplayWidget" name="commonStatus" native="true"/>
+      </item>
+     </layout>
     </item>
     <item>
      <widget class="QPlainTextEdit" name="log"/>
@@ -60,7 +67,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
+     <width>733</width>
      <height>19</height>
     </rect>
    </property>
@@ -83,9 +90,15 @@
    <header location="global">controller.h</header>
   </customwidget>
   <customwidget>
-   <class>StatusDisplayWidget</class>
+   <class>ResourceStatusDisplayWidget</class>
    <extends>QWidget</extends>
-   <header location="global">StatusDisplayWidget.h</header>
+   <header location="global">ResourceStatusDisplayWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CommonStatusDisplayWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">CommonStatusDisplayWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
