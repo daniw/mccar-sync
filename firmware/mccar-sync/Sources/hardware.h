@@ -360,6 +360,7 @@ typedef enum Chg_state_
 #define SCI_CMD_AND_PAYLOAD_SIZE 11 //without crc
 
 // function prototypes
+void startadc(void);
 void hardware_lowlevel_init(void);
 void motorcontrol(Direction_t dir, uint16 speedleft, uint16 speedright);
 Joy_ways_t getjoystick(void);
@@ -376,5 +377,6 @@ void bt_scibaud(uint16 baud);
 void bt_sendbyte(uint8 data);
 void bt_senddata(uint8* data, uint8 size);
 void bt_enqueue_crc(uint8* data, uint8 size);
+void bt_enqueue(uint8* data, uint8 size);
 
 #endif /* HARDWARE_H_ */

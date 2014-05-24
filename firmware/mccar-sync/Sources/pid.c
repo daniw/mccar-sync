@@ -7,34 +7,44 @@
 
 #include "pid.h"
 
-uint8 kp[2] = {0, 0};
-uint8 ki[2] = {0, 0};
-uint8 kd[2] = {0, 0};
+#include "util.h"
+
+void pid_init(Pid* pPid)
+{
+	_memset(pPid, 0, sizeof(Pid));
+	
+	pPid->kp = 50;
+}
+
+void pid_setCalibrationData(Pid* pPid, uint8 kp, uint8 ki, uint8 kd)
+{
+	pPid->kp = kp;
+	pPid->ki = ki;
+	pPid->kd = kd;
+}
 
 /**
  * pid control system to control the mccars speed
  * this function has to be called within a fixed period
  */
-uint16 pid(uint16 currentspeed, uint16 targetspeed, uint8 motor)
+uint16 pid_calculate(Pid* pPid, uint16 currentspeed, uint16 targetspeed)
 {
-    static uint16 e[2] = {0, 0};
-    static uint16 olde[2] = {0, 0};
-    static uint32 p[2] = {0, 0};
-    static uint32 i[2] = {0, 0};
-    static uint32 d[2] = {0, 0};
-    static uint32 w;
+    uint32 p;
+    uint32 w;
 
-    e[motor] = targetspeed - currentspeed;
-    p[motor] = kp[motor] * e[motor];
-    i[motor] = i[motor] + ki[motor] * e[motor];
-    d[motor] = kd[motor] * (e[motor] - olde[motor]);
+    pPid->e = targetspeed - currentspeed;
+    p = pPid->kp * pPid->e;
+    pPid->i = pPid->i + pPid->ki * pPid->e;
+    pPid->d = pPid->kd * (pPid->e - pPid->olde);
 
-    w = p[motor] + i[motor] + d[motor];
-    w = w >> 8;
+    w = p + pPid->i + pPid->d;
+    w = w << 2;
     if (w > 0xffff)
     {
         w = 0xffff;
     }
+    
+    pPid->olde = pPid->e;
 
-    return (uint16) w;
+    return (uint16)w;
 }

@@ -31,6 +31,8 @@
 #include "scheduler.h"
 #include "task.h"
 #include "bluetooth.h"
+#include "hardware.h"
+#include "pid.h"
 
 extern Queue bt_sendQueue;
 extern Queue bt_receiveQueue;
@@ -45,6 +47,8 @@ extern uint8 ledrightblue;
 
 extern SwappableMemoryPool swappableMemoryPool;
 
+Pid motorPid[2];
+
 Scheduler scheduler;
 
 void init()
@@ -52,7 +56,6 @@ void init()
     Com_Status_t status;
     enc_setup_t setup;
     bt_uartparam_t param;
-    uint32 i;
     setup.byte = 0x00;
     setup.flags.carrieren = 1;
     setup.flags.oleden = 1;
@@ -86,6 +89,9 @@ void init()
         bt_cmdoff();
     #endif
     bt_scibaud(BT_PRESCALER_115200);
+    
+    pid_init(&motorPid[0]);
+    pid_init(&motorPid[1]);
 }
 
 /**
@@ -97,7 +103,6 @@ void main(void)
 
 	scheduler_init(&scheduler);
 
-    //scheduler_scheduleTask(&scheduler, taskEncoder, NULL);
     //scheduler_scheduleTask(&scheduler, taskIrSensor, NULL);
     scheduler_scheduleTask(&scheduler, taskControlMotors, NULL);
     scheduler_scheduleTask(&scheduler, taskSciReceive, NULL);

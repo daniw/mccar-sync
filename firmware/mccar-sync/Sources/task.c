@@ -7,6 +7,9 @@
 
 #include "task.h"
 #include "mcmath.h"
+#include "pid.h"
+
+extern Pid motorPid[2];
 
 uint8 driveval = 0;
 int16 trimsteering = 0;
@@ -78,16 +81,13 @@ void handleSciReceive(SwappableMemoryPool* pSwappableMemoryPool)
             break;
         // ConfigPID
         case 0x03:
-            kp[0] = command[1];
-            ki[0] = command[2];
-            kd[0] = command[3];
-            kp[1] = command[4];
-            ki[1] = command[5];
-            kd[1] = command[6];
+        	pid_setCalibrationData(&motorPid[0], command[1], command[2], command[3]);
+        	pid_setCalibrationData(&motorPid[1], command[4], command[5], command[6]);
             break;
         // LEDColor
         case 0x04:
             ledleftred    = command[1];
+            break;
         // Colorsensor
         case 0x05:
             // not implemented yet
@@ -137,25 +137,12 @@ void handleSciReceive(SwappableMemoryPool* pSwappableMemoryPool)
 SwappableMemoryPool swappableMemoryPool;
 
 /**
- * Task to read the encoder
- */
-void taskEncoder(void* unused)
-{
-    enc_data_t data;
-    Com_Status_t status;
-
-	// read encoder
-    status = readencoder(&data);
-
-    scheduler_scheduleTask(&scheduler, taskEncoder, NULL);
-}
-
-/**
  * Task to read the ir sensor to detect obstacles in front of the mccar
  */
 void taskIrSensor(void* unused)
 {
     static unsigned char myirtimer = 0;
+	(void)unused;
 
     // read ir sensor
     if(myirtimer++ < 3)
@@ -187,82 +174,80 @@ void taskIrSensor(void* unused)
  */
 void taskControlMotors(void* unused)
 {
+	static uint16 maxSpeed = 500;
+	static uint16 STEERING = 100;
     static uint8 olddriveval = 0;
     uint16 speedleft = 0;
     uint16 speedright = 0;
-
-    // control motors
-    speedleft = 0xffff;
-    speedright = 0xffff;
-    if (trimsteering > 0)
-    {
-    	speedleft -= trimsteering;
-    }
-    else
-    {
-    	speedright += trimsteering;
-    }
-
+    enc_data_t encoderData;
+    Com_Status_t status;
+    Direction_t dir;
+    (void)unused;
+    
     switch (driveval & 0x0f)
     {
     case 0x01:
-    	motorcontrol(FORWARD,speedleft,speedright);
+    	dir = FORWARD;
+    	speedleft = maxSpeed;
+    	speedright = maxSpeed;
     	break;
     case 0x09:
-    	motorcontrol(FORWARD,speedleft - STEERING,speedright);
+    	dir = FORWARD;
+    	speedleft = maxSpeed - STEERING;
+    	speedright = maxSpeed;
     	break;
     case 0x08:
-    	motorcontrol(CURVELEFT,0x0000,speedright);
+    	dir = CURVELEFT;
+    	speedleft = 0x0000;
+    	speedright = maxSpeed;
     	break;
     case 0x0C:
-    	motorcontrol(BACKWARD,speedleft - STEERING,speedright);
+    	dir = BACKWARD;
+    	speedleft = maxSpeed - STEERING;
+    	speedright = maxSpeed;
     	break;
     case 0x04:
-    	motorcontrol(BACKWARD,speedleft,speedright);
+    	dir = BACKWARD;
+    	speedleft = maxSpeed;
+    	speedright = maxSpeed;
     	break;
     case 0x06:
-    	motorcontrol(BACKWARD,speedleft,speedright - STEERING);
+    	dir = BACKWARD;
+    	speedleft = maxSpeed;
+    	speedright = maxSpeed - STEERING;
     	break;
     case 0x02:
-    	motorcontrol(CURVERIGHT,speedleft,0x0000);
+    	dir = CURVERIGHT;
+    	speedleft = maxSpeed;
+    	speedright = 0x0000;
     	break;
     case 0x03:
-    	motorcontrol(FORWARD,speedleft,speedright - STEERING);
+    	dir = FORWARD;
+    	speedleft = maxSpeed;
+    	speedright = maxSpeed - STEERING;
     	break;
     case 0x00:
-    	motorcontrol(STOP,0x0000,0x0000);
+    	dir = STOP;
+    	speedleft = 0x0000;
+    	speedright = 0x0000;
     	break;
     default:
-    	motorcontrol(STOP,0x0000,0x0000);
+    	dir = STOP;
+    	speedleft = 0x0000;
+    	speedright = 0x0000;
     	break;
     }
-    if (driveval & 0x10)
-    {
-    	trimsteering += 0x0001;
-    }
-    if (driveval & 0x20)
-    {
-    	trimsteering -= 0x0001;
-    }
-    /*switch (driveval & 0x30)
-    {
-    	case 0x10:
-    		PTFD_PTFD1 = 0;
-    		PTFD_PTFD2 = 1;
-    		break;
-    	case 0x20:
-    		PTFD_PTFD1 = 1;
-    		PTFD_PTFD2 = 0;
-    		break;
-    	case 0x30:
-    		PTFD_PTFD1 = 0;
-    		PTFD_PTFD2 = 0;
-    		break;
-    	default:
-    		PTFD_PTFD1 = 1;
-    		PTFD_PTFD2 = 1;
-    		break;
-    }*/
+
+	// read encoder
+    status = readencoder(&encoderData);
+
+	motorcontrol(
+		dir,
+		pid_calculate(&motorPid[0], encoderData.fields.speed_l, speedleft),
+		pid_calculate(&motorPid[1], encoderData.fields.speed_r, speedright));
+    
+    
+    
     if (driveval & 0x40)
     {
     	PTFD_PTFD3 ^= 1;
@@ -302,6 +287,7 @@ void taskControlMotors(void* unused)
  */
 void taskSciReceive(void* unused)
 {
+    (void)unused;
 	handleSciReceive(&swappableMemoryPool);
 
     scheduler_scheduleTask(&scheduler, taskSciReceive, NULL);
@@ -313,6 +299,7 @@ void taskSciReceive(void* unused)
 void taskSendStatus(void* unused)
 {
 	static counter = 500;
+    (void)unused;
 	if ((++counter % 1000) == 0)
 	{
 		uint8 cmd[10];
@@ -337,11 +324,11 @@ void taskSendStatus(void* unused)
 void taskSendRessource(void* unused)
 {
 	static counter = 0;
-	uint16 bufferNo;
 	uint8 i;
 	uint8 usedPages = 0;
 	uint8 freePages;
 	PagePool* pool;
+    (void)unused;
 	if ((++counter % 1000) == 0)
 	{
 		uint8 cmd[7];
@@ -376,6 +363,7 @@ void taskCalcLine(void* unused)
 	uint16 linesensorcorr[8];
 	uint8 i;
 	uint16 max = 0;
+    (void)unused;
 	if ((++counter % 1000) == 0)
 	{
 		// invert results for detecting a black line, not needed for a white line
