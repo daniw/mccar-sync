@@ -1,25 +1,25 @@
-#include "StatusDisplayWidget.h"
-#include "ui_StatusDisplayWidget.h"
+#include "ResourceStatusDisplayWidget.h"
+#include "ui_ResourceStatusDisplayWidget.h"
 
 #include "InvokeInEventLoop.h"
 
 #include <QDateTime>
 
-StatusDisplayWidget::StatusDisplayWidget(QWidget *parent) :
+ResourceStatusDisplayWidget::ResourceStatusDisplayWidget(QWidget *parent) :
 	QWidget(parent),
-	ui(new Ui::StatusDisplayWidget)
+	ui(new Ui::ResourceStatusDisplayWidget)
 {
 	ui->setupUi(this);
 }
 
-StatusDisplayWidget::~StatusDisplayWidget()
+ResourceStatusDisplayWidget::~ResourceStatusDisplayWidget()
 {
 	delete ui;
 }
 
-void StatusDisplayWidget::update(RessourcePayload status)
+void ResourceStatusDisplayWidget::update(ResourcePayload status)
 {
-	callFnDeferredAsync(this,  [=]() mutable
+	callFnDeferredAsync(this, [=]() mutable
 	{
 		if (status.usedReceiveQueue == 0)
 		{

@@ -305,8 +305,7 @@ struct __attribute__ ((packed)) NotifyVersionPayload
     uint8_t version;
 };
 
-
-struct __attribute__ ((packed)) RessourcePayload
+struct __attribute__ ((packed)) ResourcePayload
 {
 	enum { cmd_id = 0x0d };
 	uint8_t taskQueueLoad;
@@ -315,6 +314,25 @@ struct __attribute__ ((packed)) RessourcePayload
 	uint8_t pageSize;
 	uint8_t usedReceiveQueue;
 	uint8_t freeReceiveQueue;
+};
+
+struct __attribute__ ((packed)) StatusPayload
+{
+	enum { cmd_id = 0x0b };
+	uint16_t voltage() { return voltageH << 8 | voltageL; }
+	uint16_t current() { return currentH << 8 | currentL; }
+	uint16_t chargeStatus() { return chargeStatusH << 8 | chargeStatusL; }
+	uint16_t lineWidth() { return lineWidthH << 8 | lineWidthL; }
+
+	uint8_t voltageH;
+	uint8_t voltageL;
+	uint8_t currentH;
+	uint8_t currentL;
+	uint8_t chargeStatusH;
+	uint8_t chargeStatusL;
+	uint8_t linePosition;
+	uint8_t lineWidthH;
+	uint8_t lineWidthL;
 };
 
 #endif // Payload_H
