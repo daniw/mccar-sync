@@ -79,7 +79,7 @@ void init()
     #ifdef BT_PRG
     	PTFD_PTFD1 = 0;
         bt_cmdon();
-        //for (i = 0; i < 10000; i++);
+        for (i = 0; i < 10000; i++);
         bt_setparam(param);
         PTFD_PTFD1 = 1;
         for (i = 0; i < 10000; i++);

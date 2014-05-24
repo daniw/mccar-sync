@@ -10,6 +10,7 @@
 extern Queue bt_sendQueue;
 extern Queue bt_receiveQueue;
 
+extern uint8 bt_send_busy;
 
 static uint8 busy = 0;
 static uint8 bt_str[64];
@@ -230,8 +231,16 @@ bt_success_t bt_setparam(bt_uartparam_t param)
     bt_str[17] = '0';
 	bt_str[18] = '\r';
 	bt_str[19] = '\n';
-    bt_enqueue(bt_str, 20);
-    while (!queue_dequeue(&bt_receiveQueue, ret, 4));
+	queue_enqueue(&bt_sendQueue, bt_str, 20);
+	if (!bt_send_busy)								// restart sci if stopped
+	{
+		if (queue_getUsedSpace(&bt_sendQueue) > 0)
+		{
+			bt_send_busy = TRUE;
+			SCI1C2_TCIE = 1;
+		}
+	}
+	while (!queue_dequeue(&bt_receiveQueue, ret, 4));
     if (ret[0] == 'O' && ret[1] == 'K' && ret[2] == '\r' && ret[3] == '\n')
     {
 	    return SUCCESS;
